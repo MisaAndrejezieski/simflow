@@ -5,16 +5,17 @@
 let melhoriasData = [];
 let melhoriaIdCounter = 1;
 
+console.log('📈 Módulo Melhorias carregado!');
+
 // ================================================================
 // CARREGAR LISTA
 // ================================================================
 
 function carregarListaMelhorias() {
+    console.log('📈 carregarListaMelhorias chamado');
     const content = document.getElementById('page-content');
     
-    let html = `
-        <div class="grid-melhorias">
-    `;
+    let html = `<div class="grid-melhorias">`;
     
     if (melhoriasData.length === 0) {
         html += `
@@ -44,8 +45,8 @@ function carregarListaMelhorias() {
                     <div class="melhoria-footer">
                         <small>📅 ${m.data_criacao}</small>
                         <div style="display: flex; gap: 4px;">
-                            <button class="btn btn-sm btn-secondary" onclick="editarMelhoria(${m.id})">✏️</button>
-                            <button class="btn btn-sm btn-danger" onclick="deletarMelhoria(${m.id})">🗑️</button>
+                            <button class="btn btn-sm btn-secondary" onclick="window.editarMelhoria(${m.id})">✏️</button>
+                            <button class="btn btn-sm btn-danger" onclick="window.deletarMelhoria(${m.id})">🗑️</button>
                         </div>
                     </div>
                 </div>
@@ -55,97 +56,4 @@ function carregarListaMelhorias() {
     
     html += `</div>`;
     content.innerHTML = html;
-}
-
-// ================================================================
-// ABRIR MODAL
-// ================================================================
-
-function abrirModalMelhoriaReal(dados = null) {
-    const modal = document.getElementById('modal-melhoria');
-    const form = document.getElementById('form-melhoria');
-    
-    form.reset();
-    document.getElementById('melhoria-id').value = '';
-    document.getElementById('melhoria-categoria').value = 'Ver & Agir';
-    
-    if (dados) {
-        document.getElementById('melhoria-id').value = dados.id;
-        document.getElementById('melhoria-titulo').value = dados.titulo;
-        document.getElementById('melhoria-descricao').value = dados.descricao;
-        document.getElementById('melhoria-categoria').value = dados.categoria;
-        document.getElementById('melhoria-imagem-antes').value = dados.imagem_antes || '';
-        document.getElementById('melhoria-imagem-depois').value = dados.imagem_depois || '';
-    }
-    
-    modal.style.display = 'flex';
-    document.body.style.overflow = 'hidden';
-}
-
-// ================================================================
-// SALVAR MELHORIA
-// ================================================================
-
-document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('form-melhoria');
-    if (form) {
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const id = document.getElementById('melhoria-id').value;
-            const hoje = new Date().toLocaleDateString('pt-BR');
-            
-            const dados = {
-                titulo: document.getElementById('melhoria-titulo').value,
-                descricao: document.getElementById('melhoria-descricao').value,
-                categoria: document.getElementById('melhoria-categoria').value,
-                imagem_antes: document.getElementById('melhoria-imagem-antes').value,
-                imagem_depois: document.getElementById('melhoria-imagem-depois').value
-            };
-            
-            if (id) {
-                const index = melhoriasData.findIndex(m => m.id === parseInt(id));
-                if (index !== -1) {
-                    melhoriasData[index] = { ...melhoriasData[index], ...dados };
-                }
-            } else {
-                melhoriasData.push({
-                    id: melhoriaIdCounter++,
-                    ...dados,
-                    data_criacao: hoje
-                });
-            }
-            
-            fecharModal('modal-melhoria');
-            carregarPagina(paginaAtual);
-        });
-    }
-});
-
-// ================================================================
-// EDITAR MELHORIA
-// ================================================================
-
-function editarMelhoria(id) {
-    const melhoria = melhoriasData.find(m => m.id === id);
-    if (melhoria) {
-        abrirModalMelhoriaReal(melhoria);
-    }
-}
-
-// ================================================================
-// DELETAR MELHORIA
-// ================================================================
-
-function deletarMelhoria(id) {
-    if (confirm('Deseja realmente excluir esta melhoria?')) {
-        melhoriasData = melhoriasData.filter(m => m.id !== id);
-        carregarPagina(paginaAtual);
-    }
-}
-
-// Sobrescrever funções globais
-window.carregarListaMelhorias = carregarListaMelhorias;
-window.abrirModalMelhoriaReal = abrirModalMelhoriaReal;
-window.editarMelhoria = editarMelhoria;
-window.deletarMelhoria = deletarMelhoria;
+    console.log('✅ Lista
