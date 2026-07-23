@@ -1,50 +1,68 @@
 from datetime import datetime
 
-from database.conexao import db
 from flask import Blueprint, jsonify, request
-from models.etiqueta import Etiqueta
 
+# Cria o Blueprint com o nome correto
 etiquetas_bp = Blueprint('etiquetas', __name__)
 
-# Listar todas as etiquetas
+# Dados em memória (depois substituir por banco de dados)
+etiquetas_db = []
+contador_id = 1
+
+# Rota para listar todas as etiquetas
 @etiquetas_bp.route('/', methods=['GET'])
-def listar():
-    etiquetas = Etiqueta.query.order_by(Etiqueta.data_abertura.desc()).all()
-    return jsonify([e.to_json() for e in etiquetas])
+def listar_etiquetas():
+    return jsonify(etiquetas_db)
 
-# Criar nova etiqueta
+# Rota para criar nova etiqueta
 @etiquetas_bp.route('/', methods=['POST'])
-def criar():
+def criar_etiqueta():
+    global contador_id
+    
     dados = request.json
+    etiqueta = {
+        'id': contador_id,
+        'titulo': dados.get('titulo', ''),
+        'descricao': dados.get('descricao', ''),
+        'tipo': dados.get('tipo', 'Azul'),
+        'status': 'Aberta',
+        'linha': dados.get('linha', ''),
+        'responsavel': dados.get('responsavel', ''),
+        'via': dados.get('via', ''),
+        'observacoes': dados.get('observacoes', ''),
+        'data_abertura': datetime.now().isoformat(),
+        'data_fechamento': None
+    }
     
-    etiqueta = Etiqueta(
-        titulo=dados.get('titulo'),
-        descricao=dados.get('descricao'),
-        tipo=dados.get('tipo'),
-        linha=dados.get('linha'),
-        responsavel=dados.get('responsavel'),
-        via=dados.get('via'),
-        observacoes=dados.get('observacoes')
-    )
+    etiquetas_db.append(etiqueta)
+    contador_id += 1
     
-    db.session.add(etiqueta)
-    db.session.commit()
-    
-    return jsonify(etiqueta.to_json()), 201
+    return jsonify(etiqueta), 201
 
-# Atualizar status
+# Rota para atualizar etiqueta
 @etiquetas_bp.route('/<int:id>', methods=['PUT'])
-def atualizar(id):
-    etiqueta = Etiqueta.query.get_or_404(id)
+def atualizar_etiqueta(id):
     dados = request.json
     
-    if 'status' in dados:
-        etiqueta.status = dados['status']
-        if dados['status'] == 'Concluída':
-            etiqueta.data_fechamento = datetime.utcnow()
+    for etiqueta in etiquetas_db:
+        if etiqueta['id'] == id:
+            if 'status' in dados:
+                etiqueta['status'] = dados['status']
+                if dados['status'] == 'Concluída':
+                    etiqueta['data_fechamento'] = datetime.now().isoformat()
+            
+            if 'observacoes' in dados:
+                etiqueta['observacoes'] = dados['observacoes']
+            
+            return jsonify(etiqueta)
     
-    if 'observacoes' in dados:
-        etiqueta.observacoes = dados['observacoes']
+    return jsonify({'erro': 'Etiqueta não encontrada'}), 404
+
+# Rota para buscar etiqueta por ID
+@etiquetas_bp.route('/<int:id>', methods=['GET'])
+def buscar_etiqueta(id):
+    for etiqueta in etiquetas_db:
+        if etiqueta['id'] == id:
+            return jsonify(etiqueta)
     
-    db.session.commit()
-    return jsonify(etiqueta.to_json())
+    return jsonify({'erro': 'Etiqueta não encontrada'}), 404
