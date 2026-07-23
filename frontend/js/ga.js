@@ -5,11 +5,14 @@
 let gaData = [];
 let gaIdCounter = 1;
 
+console.log('👥 Módulo GA carregado!');
+
 // ================================================================
 // CARREGAR LISTA
 // ================================================================
 
 function carregarListaGA() {
+    console.log('👥 carregarListaGA chamado');
     const content = document.getElementById('page-content');
     
     let html = `
@@ -53,8 +56,8 @@ function carregarListaGA() {
                     <td><span class="badge badge-info">${r.acoes_geradas || 0}</span></td>
                     <td>
                         <div style="display: flex; gap: 4px;">
-                            <button class="btn btn-sm btn-secondary" onclick="editarGA(${r.id})">✏️</button>
-                            <button class="btn btn-sm btn-danger" onclick="deletarGA(${r.id})">🗑️</button>
+                            <button class="btn btn-sm btn-secondary" onclick="window.editarGA(${r.id})">✏️</button>
+                            <button class="btn btn-sm btn-danger" onclick="window.deletarGA(${r.id})">🗑️</button>
                         </div>
                     </td>
                 </tr>
@@ -70,6 +73,7 @@ function carregarListaGA() {
     `;
     
     content.innerHTML = html;
+    console.log('✅ Lista GA atualizada com', gaData.length, 'itens');
 }
 
 // ================================================================
@@ -77,20 +81,24 @@ function carregarListaGA() {
 // ================================================================
 
 function abrirModalGAReal(dados = null) {
+    console.log('📝 abrirModalGAReal chamado', dados);
     const modal = document.getElementById('modal-ga');
     const form = document.getElementById('form-ga');
     
+    if (!modal || !form) {
+        console.error('❌ Modal ou formulário GA não encontrado');
+        return;
+    }
+    
     form.reset();
     document.getElementById('ga-id').value = '';
-    
-    // Data padrão = hoje
     const hoje = new Date().toISOString().split('T')[0];
     document.getElementById('ga-data').value = hoje;
     
     if (dados) {
         document.getElementById('ga-id').value = dados.id;
         document.getElementById('ga-data').value = dados.data;
-        document.getElementById('ga-pauta').value = dados.pauta;
+        document.getElementById('ga-pauta').value = dados.pauta || '';
         document.getElementById('ga-participantes').value = dados.participantes || '';
         document.getElementById('ga-decisoes').value = dados.decisoes || '';
         document.getElementById('ga-acoes').value = dados.acoes_geradas || 0;
@@ -98,6 +106,7 @@ function abrirModalGAReal(dados = null) {
     
     modal.style.display = 'flex';
     document.body.style.overflow = 'hidden';
+    console.log('✅ Modal GA aberto');
 }
 
 // ================================================================
@@ -109,30 +118,32 @@ document.addEventListener('DOMContentLoaded', function() {
     if (form) {
         form.addEventListener('submit', function(e) {
             e.preventDefault();
+            console.log('📝 Formulário GA submetido');
             
             const id = document.getElementById('ga-id').value;
+            const dataISO = document.getElementById('ga-data').value;
+            const dataFormatada = new Date(dataISO + 'T00:00:00').toLocaleDateString('pt-BR');
+            
             const dados = {
-                data: document.getElementById('ga-data').value,
+                data: dataFormatada,
                 pauta: document.getElementById('ga-pauta').value,
                 participantes: document.getElementById('ga-participantes').value,
                 decisoes: document.getElementById('ga-decisoes').value,
                 acoes_geradas: parseInt(document.getElementById('ga-acoes').value) || 0
             };
             
-            // Formatar data para exibição
-            const dataFormatada = new Date(dados.data + 'T00:00:00').toLocaleDateString('pt-BR');
+            console.log('📝 Dados GA:', dados);
             
             if (id) {
                 const index = gaData.findIndex(r => r.id === parseInt(id));
                 if (index !== -1) {
-                    gaData[index] = { ...gaData[index], ...dados, data: dataFormatada };
+                    gaData[index] = { ...gaData[index], ...dados };
+                    console.log('✅ GA atualizado:', id);
                 }
             } else {
-                gaData.push({
-                    id: gaIdCounter++,
-                    ...dados,
-                    data: dataFormatada
-                });
+                const novoGA = { id: gaIdCounter++, ...dados };
+                gaData.push(novoGA);
+                console.log('✅ Novo GA criado:', novoGA);
             }
             
             fecharModal('modal-ga');
@@ -146,12 +157,14 @@ document.addEventListener('DOMContentLoaded', function() {
 // ================================================================
 
 function editarGA(id) {
+    console.log('✏️ Editando GA', id);
     const reuniao = gaData.find(r => r.id === id);
     if (reuniao) {
-        // Converter data de volta para formato YYYY-MM-DD
         const partes = reuniao.data.split('/');
         const dataISO = `${partes[2]}-${partes[1]}-${partes[0]}`;
         abrirModalGAReal({ ...reuniao, data: dataISO });
+    } else {
+        console.error('❌ GA não encontrado:', id);
     }
 }
 
@@ -160,14 +173,21 @@ function editarGA(id) {
 // ================================================================
 
 function deletarGA(id) {
+    console.log('🗑️ Deletando GA', id);
     if (confirm('Deseja realmente excluir esta reunião?')) {
-        gaData = gaData.filter(r => r.id !== id);
-        carregarPagina(paginaAtual);
+        const index = gaData.findIndex(r => r.id === id);
+        if (index !== -1) {
+            gaData.splice(index, 1);
+            console.log('✅ GA deletado:', id);
+            carregarPagina(paginaAtual);
+        }
     }
 }
 
-// Sobrescrever funções globais
+// EXPORTA FUNÇÕES PARA O ESCOPO GLOBAL
 window.carregarListaGA = carregarListaGA;
 window.abrirModalGAReal = abrirModalGAReal;
 window.editarGA = editarGA;
 window.deletarGA = deletarGA;
+
+console.log('✅ GA.js carregado e funções exportadas!');
