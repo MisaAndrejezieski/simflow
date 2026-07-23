@@ -26,27 +26,45 @@ async function apiRequest(endpoint, method = 'GET', data = null) {
     }
 }
 
-// Funções específicas para Etiquetas
+// ============================================
+// API - ETIQUETAS
+// ============================================
 const EtiquetasAPI = {
     listar: () => apiRequest('/etiquetas/'),
     criar: (dados) => apiRequest('/etiquetas/', 'POST', dados),
     atualizar: (id, dados) => apiRequest(`/etiquetas/${id}`, 'PUT', dados),
+    buscar: (id) => apiRequest(`/etiquetas/${id}`),
 };
 
-// Funções para GA
+// ============================================
+// API - GA (Grupo Autônomo)
+// ============================================
 const GAAPI = {
     listar: () => apiRequest('/ga/'),
     criar: (dados) => apiRequest('/ga/', 'POST', dados),
+    atualizar: (id, dados) => apiRequest(`/ga/${id}`, 'PUT', dados),
+    deletar: (id) => apiRequest(`/ga/${id}`, 'DELETE'),
+    buscar: (id) => apiRequest(`/ga/${id}`),
 };
 
-// Funções para Melhorias
+// ============================================
+// API - MELHORIAS (Ver & Agir / LUP'S)
+// ============================================
 const MelhoriasAPI = {
     listar: () => apiRequest('/melhorias/'),
     criar: (dados) => apiRequest('/melhorias/', 'POST', dados),
+    atualizar: (id, dados) => apiRequest(`/melhorias/${id}`, 'PUT', dados),
+    deletar: (id) => apiRequest(`/melhorias/${id}`, 'DELETE'),
+    buscar: (id) => apiRequest(`/melhorias/${id}`),
 };
 
-// Funções para Quase Acidentes
+// ============================================
+// API - QUASE ACIDENTES
+// ============================================
 const AcidentesAPI = {
     listar: () => apiRequest('/acidentes/'),
     criar: (dados) => apiRequest('/acidentes/', 'POST', dados),
+    atualizar: (id, dados) => apiRequest(`/acidentes/${id}`, 'PUT', dados),
+    deletar: (id) => apiRequest(`/acidentes/${id}`, 'DELETE'),
+    buscar: (id) => apiRequest(`/acidentes/${id}`),
 };
