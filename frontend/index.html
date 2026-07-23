@@ -16,20 +16,20 @@
             </div>
             <div class="sidebar-nav">
                 <ul>
-                    <li class="active" data-page="dashboard">
+                    <li class="active" onclick="carregarPagina('dashboard')">
                         <span class="icon">📊</span> Dashboard
                     </li>
-                    <li data-page="etiquetas">
+                    <li onclick="carregarPagina('etiquetas')">
                         <span class="icon">🏷️</span> Etiquetas
                         <span class="badge-sidebar" id="badge-etiquetas">0</span>
                     </li>
-                    <li data-page="ga">
+                    <li onclick="carregarPagina('ga')">
                         <span class="icon">👥</span> GA
                     </li>
-                    <li data-page="melhorias">
+                    <li onclick="carregarPagina('melhorias')">
                         <span class="icon">📈</span> Ver & Agir
                     </li>
-                    <li data-page="acidentes">
+                    <li onclick="carregarPagina('acidentes')">
                         <span class="icon">⚠️</span> Quase Acidentes
                     </li>
                 </ul>
@@ -50,13 +50,14 @@
             <div class="content-header">
                 <h2 id="page-title">📊 Dashboard</h2>
                 <div class="header-actions">
-                    <button id="btn-novo" class="btn btn-primary">+ Novo</button>
+                    <button id="btn-novo" class="btn btn-primary" onclick="abrirModalPadrao()">+ Novo</button>
                 </div>
             </div>
             
             <section id="page-content">
-                <!-- Conteúdo dinâmico carregado via JavaScript -->
-                <div class="loading">Carregando...</div>
+                <div style="text-align:center; padding: 60px; color: var(--text-muted);">
+                    <h3>Carregando...</h3>
+                </div>
             </section>
         </main>
     </div>
@@ -68,7 +69,7 @@
         <div class="modal-content">
             <button class="modal-close" onclick="fecharModal('modal-etiqueta')">&times;</button>
             <h2>📝 Nova Etiqueta</h2>
-            <form id="form-etiqueta">
+            <form id="form-etiqueta" onsubmit="salvarEtiqueta(event)">
                 <input type="hidden" id="etiqueta-id">
                 <div>
                     <label>Título</label>
@@ -76,14 +77,13 @@
                 </div>
                 <div>
                     <label>Descrição</label>
-                    <textarea id="etiqueta-descricao" placeholder="Descreva o problema ou melhoria" required></textarea>
+                    <textarea id="etiqueta-descricao" placeholder="Descreva o problema" required></textarea>
                 </div>
                 <div class="form-row">
                     <div>
                         <label>Tipo</label>
                         <select id="etiqueta-tipo" required>
-                            <option value="">Selecione...</option>
-                            <option value="Azul">🔵 Azul - Operador resolve</option>
+                            <option value="Azul">🔵 Azul - Operador</option>
                             <option value="Vermelha">🔴 Vermelha - Manutenção</option>
                         </select>
                     </div>
@@ -98,16 +98,16 @@
                 <div class="form-row">
                     <div>
                         <label>Responsável</label>
-                        <input type="text" id="etiqueta-responsavel" placeholder="Nome do responsável">
+                        <input type="text" id="etiqueta-responsavel" placeholder="Nome">
                     </div>
                     <div>
                         <label>Via</label>
-                        <input type="text" id="etiqueta-via" placeholder="Controle / Manutenção">
+                        <input type="text" id="etiqueta-via" placeholder="Controle/Manutenção">
                     </div>
                 </div>
                 <div>
                     <label>Observações</label>
-                    <textarea id="etiqueta-observacoes" placeholder="Observações adicionais" rows="2"></textarea>
+                    <textarea id="etiqueta-observacoes" placeholder="Observações" rows="2"></textarea>
                 </div>
                 <div class="form-actions">
                     <button type="button" class="btn btn-secondary" onclick="fecharModal('modal-etiqueta')">Cancelar</button>
@@ -118,131 +118,344 @@
     </div>
     
     <!-- ============================================ -->
-    <!-- MODAL - GA -->
+    <!-- TODOS OS SCRIPTS EM UM SÓ ARQUIVO (para garantir) -->
     <!-- ============================================ -->
-    <div id="modal-ga" class="modal">
-        <div class="modal-content">
-            <button class="modal-close" onclick="fecharModal('modal-ga')">&times;</button>
-            <h2>👥 Nova Reunião GA</h2>
-            <form id="form-ga">
-                <input type="hidden" id="ga-id">
-                <div>
-                    <label>Data da Reunião</label>
-                    <input type="date" id="ga-data" required>
-                </div>
-                <div>
-                    <label>Pauta</label>
-                    <input type="text" id="ga-pauta" placeholder="Assunto da reunião" required>
-                </div>
-                <div>
-                    <label>Participantes</label>
-                    <input type="text" id="ga-participantes" placeholder="Nomes separados por vírgula">
-                </div>
-                <div>
-                    <label>Decisões</label>
-                    <textarea id="ga-decisoes" placeholder="Decisões tomadas na reunião" rows="3"></textarea>
-                </div>
-                <div>
-                    <label>Ações Geradas</label>
-                    <input type="number" id="ga-acoes" placeholder="Quantas ações foram geradas" min="0" value="0">
-                </div>
-                <div class="form-actions">
-                    <button type="button" class="btn btn-secondary" onclick="fecharModal('modal-ga')">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">💾 Salvar</button>
-                </div>
-            </form>
-        </div>
-    </div>
-    
-    <!-- ============================================ -->
-    <!-- MODAL - MELHORIA -->
-    <!-- ============================================ -->
-    <div id="modal-melhoria" class="modal">
-        <div class="modal-content">
-            <button class="modal-close" onclick="fecharModal('modal-melhoria')">&times;</button>
-            <h2>📈 Nova Melhoria</h2>
-            <form id="form-melhoria">
-                <input type="hidden" id="melhoria-id">
-                <div>
-                    <label>Título</label>
-                    <input type="text" id="melhoria-titulo" placeholder="Título da melhoria" required>
-                </div>
-                <div>
-                    <label>Descrição</label>
-                    <textarea id="melhoria-descricao" placeholder="Descreva a melhoria" rows="3" required></textarea>
-                </div>
-                <div>
-                    <label>Categoria</label>
-                    <select id="melhoria-categoria" required>
-                        <option value="Ver & Agir">📊 Ver & Agir</option>
-                        <option value="LUP">📖 LUP - Lição de Um Ponto</option>
-                    </select>
-                </div>
-                <div class="form-row">
-                    <div>
-                        <label>Imagem ANTES (URL)</label>
-                        <input type="text" id="melhoria-imagem-antes" placeholder="https://...">
+    <script>
+        // ================================================================
+        // SIMFLOW - SISTEMA COMPLETO EM UM ARQUIVO SÓ
+        // ================================================================
+        
+        console.log('🚀 SIMFlow iniciado!');
+        
+        // ================================================================
+        // DADOS EM MEMÓRIA
+        // ================================================================
+        let etiquetas = [];
+        let etiquetaId = 1;
+        let paginaAtual = 'dashboard';
+        
+        // ================================================================
+        // NAVEGAÇÃO
+        // ================================================================
+        function carregarPagina(pagina) {
+            console.log('📄 Carregando página:', pagina);
+            paginaAtual = pagina;
+            
+            // Atualizar menu
+            document.querySelectorAll('.sidebar-nav ul li').forEach(item => {
+                item.classList.remove('active');
+            });
+            document.querySelector(`.sidebar-nav ul li[onclick*="${pagina}"]`)?.classList.add('active');
+            
+            // Atualizar título
+            const titulos = {
+                'dashboard': '📊 Dashboard',
+                'etiquetas': '🏷️ Etiquetas',
+                'ga': '👥 Grupo Autônomo (GA)',
+                'melhorias': '📈 Ver & Agir / LUP\'S',
+                'acidentes': '⚠️ Quase Acidentes'
+            };
+            document.getElementById('page-title').textContent = titulos[pagina] || pagina;
+            
+            // Mostrar/esconder botão Novo
+            const btnNovo = document.getElementById('btn-novo');
+            btnNovo.style.display = (pagina === 'dashboard') ? 'none' : 'inline-flex';
+            
+            // Carregar conteúdo
+            switch(pagina) {
+                case 'dashboard': carregarDashboard(); break;
+                case 'etiquetas': carregarEtiquetas(); break;
+                case 'ga': carregarGA(); break;
+                case 'melhorias': carregarMelhorias(); break;
+                case 'acidentes': carregarAcidentes(); break;
+                default: document.getElementById('page-content').innerHTML = '<p>Página em construção</p>';
+            }
+        }
+        
+        // ================================================================
+        // DASHBOARD
+        // ================================================================
+        function carregarDashboard() {
+            const content = document.getElementById('page-content');
+            const abertas = etiquetas.filter(e => e.status !== 'Concluída');
+            
+            // Atualizar badge
+            document.getElementById('badge-etiquetas').textContent = abertas.length;
+            
+            let html = `
+                <div class="dashboard-cards">
+                    <div class="card card-purple">
+                        <div class="card-icon">📋</div>
+                        <div class="card-label">Total</div>
+                        <div class="card-value">${etiquetas.length}</div>
                     </div>
-                    <div>
-                        <label>Imagem DEPOIS (URL)</label>
-                        <input type="text" id="melhoria-imagem-depois" placeholder="https://...">
+                    <div class="card card-yellow">
+                        <div class="card-icon">⏳</div>
+                        <div class="card-label">Em Aberto</div>
+                        <div class="card-value">${abertas.length}</div>
                     </div>
-                </div>
-                <div class="form-actions">
-                    <button type="button" class="btn btn-secondary" onclick="fecharModal('modal-melhoria')">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">💾 Salvar</button>
-                </div>
-            </form>
-        </div>
-    </div>
-    
-    <!-- ============================================ -->
-    <!-- MODAL - QUASE ACIDENTE -->
-    <!-- ============================================ -->
-    <div id="modal-acidente" class="modal">
-        <div class="modal-content">
-            <button class="modal-close" onclick="fecharModal('modal-acidente')">&times;</button>
-            <h2>⚠️ Registrar Quase Acidente</h2>
-            <form id="form-acidente">
-                <input type="hidden" id="acidente-id">
-                <div>
-                    <label>Descrição do Ocorrido</label>
-                    <textarea id="acidente-descricao" placeholder="Descreva o que aconteceu" rows="3" required></textarea>
-                </div>
-                <div class="form-row">
-                    <div>
-                        <label>Local</label>
-                        <input type="text" id="acidente-local" placeholder="Onde ocorreu" required>
+                    <div class="card card-red">
+                        <div class="card-icon">🔴</div>
+                        <div class="card-label">Vermelhas</div>
+                        <div class="card-value">${etiquetas.filter(e => e.tipo === 'Vermelha' && e.status !== 'Concluída').length}</div>
                     </div>
-                    <div>
-                        <label>Responsável pelo Registro</label>
-                        <input type="text" id="acidente-responsavel" placeholder="Quem registrou" required>
+                    <div class="card card-blue">
+                        <div class="card-icon">🔵</div>
+                        <div class="card-label">Azuis</div>
+                        <div class="card-value">${etiquetas.filter(e => e.tipo === 'Azul' && e.status !== 'Concluída').length}</div>
                     </div>
                 </div>
-                <div>
-                    <label>Status</label>
-                    <select id="acidente-status">
-                        <option value="Reportado">📢 Reportado</option>
-                        <option value="Em Análise">🔍 Em Análise</option>
-                        <option value="Resolvido">✅ Resolvido</option>
-                    </select>
+                <div class="table-container">
+                    <div class="table-header"><h3>📋 Últimas Etiquetas</h3></div>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead><tr><th>ID</th><th>Título</th><th>Tipo</th><th>Status</th><th>Data</th></tr></thead>
+                            <tbody>
+                    `;
+            
+            const ultimas = [...etiquetas].reverse().slice(0, 5);
+            if (ultimas.length === 0) {
+                html += `<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhuma etiqueta</td></tr>`;
+            } else {
+                ultimas.forEach(e => {
+                    const tipoClass = e.tipo === 'Azul' ? 'badge-azul' : 'badge-vermelha';
+                    const statusClass = e.status === 'Concluída' ? 'status-concluida' : 'status-aberta';
+                    html += `<tr><td>#${e.id}</td><td>${e.titulo}</td><td><span class="badge ${tipoClass}">${e.tipo}</span></td><td><span class="${statusClass}">${e.status}</span></td><td>${e.data_abertura}</td></tr>`;
+                });
+            }
+            
+            html += `</tbody></table></div></div>`;
+            content.innerHTML = html;
+        }
+        
+        // ================================================================
+        // ETIQUETAS
+        // ================================================================
+        function carregarEtiquetas() {
+            const content = document.getElementById('page-content');
+            
+            let html = `
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3>🏷️ Todas as Etiquetas</h3>
+                        <div class="table-filters">
+                            <select id="filtro-tipo" onchange="filtrarEtiquetas()">
+                                <option value="">Todos</option>
+                                <option value="Azul">🔵 Azul</option>
+                                <option value="Vermelha">🔴 Vermelha</option>
+                            </select>
+                            <select id="filtro-status" onchange="filtrarEtiquetas()">
+                                <option value="">Todos</option>
+                                <option value="Aberta">⏳ Aberta</option>
+                                <option value="Em Análise">🔍 Em Análise</option>
+                                <option value="Concluída">✅ Concluída</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead><tr><th>ID</th><th>Título</th><th>Descrição</th><th>Tipo</th><th>Status</th><th>Linha</th><th>Responsável</th><th>Ações</th></tr></thead>
+                            <tbody id="tabela-etiquetas-body">
+                    `;
+            
+            if (etiquetas.length === 0) {
+                html += `<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhuma etiqueta</td></tr>`;
+            } else {
+                etiquetas.forEach(e => {
+                    const tipoClass = e.tipo === 'Azul' ? 'badge-azul' : 'badge-vermelha';
+                    const statusClass = e.status === 'Concluída' ? 'status-concluida' : 'status-aberta';
+                    html += `
+                        <tr data-tipo="${e.tipo}" data-status="${e.status}">
+                            <td>#${e.id}</td>
+                            <td><strong>${e.titulo}</strong></td>
+                            <td>${e.descricao.substring(0, 50)}${e.descricao.length > 50 ? '...' : ''}</td>
+                            <td><span class="badge ${tipoClass}">${e.tipo}</span></td>
+                            <td><span class="${statusClass}">${e.status}</span></td>
+                            <td>${e.linha || '-'}</td>
+                            <td>${e.responsavel || '-'}</td>
+                            <td>
+                                <div style="display:flex;gap:4px;flex-wrap:wrap;">
+                                    ${e.status !== 'Concluída' ? `
+                                        <button class="btn btn-sm btn-primary" onclick="atualizarStatus(${e.id}, 'Em Análise')">Analisar</button>
+                                        <button class="btn btn-sm btn-success" onclick="atualizarStatus(${e.id}, 'Concluída')">Concluir</button>
+                                    ` : ''}
+                                    <button class="btn btn-sm btn-danger" onclick="deletarEtiqueta(${e.id})">🗑️</button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
+            
+            html += `</tbody></table></div></div>`;
+            content.innerHTML = html;
+        }
+        
+        // ================================================================
+        // MODAL PADRÃO
+        // ================================================================
+        function abrirModalPadrao() {
+            console.log('📝 Abrindo modal para:', paginaAtual);
+            
+            if (paginaAtual === 'etiquetas') {
+                document.getElementById('modal-etiqueta').style.display = 'flex';
+                document.getElementById('form-etiqueta').reset();
+                document.getElementById('etiqueta-id').value = '';
+                document.body.style.overflow = 'hidden';
+            } else {
+                alert('Módulo ' + paginaAtual + ' em desenvolvimento!');
+            }
+        }
+        
+        function fecharModal(id) {
+            document.getElementById(id).style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+        
+        // Fechar modal clicando fora
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('modal')) {
+                e.target.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        });
+        
+        // ================================================================
+        // SALVAR ETIQUETA
+        // ================================================================
+        function salvarEtiqueta(event) {
+            event.preventDefault();
+            console.log('📝 Salvando etiqueta...');
+            
+            const id = document.getElementById('etiqueta-id').value;
+            const hoje = new Date().toLocaleDateString('pt-BR');
+            
+            const dados = {
+                titulo: document.getElementById('etiqueta-titulo').value,
+                descricao: document.getElementById('etiqueta-descricao').value,
+                tipo: document.getElementById('etiqueta-tipo').value,
+                linha: document.getElementById('etiqueta-linha').value,
+                responsavel: document.getElementById('etiqueta-responsavel').value,
+                via: document.getElementById('etiqueta-via').value,
+                observacoes: document.getElementById('etiqueta-observacoes').value
+            };
+            
+            if (id) {
+                const index = etiquetas.findIndex(e => e.id === parseInt(id));
+                if (index !== -1) {
+                    etiquetas[index] = { ...etiquetas[index], ...dados };
+                    console.log('✅ Etiqueta atualizada:', id);
+                }
+            } else {
+                etiquetas.push({
+                    id: etiquetaId++,
+                    ...dados,
+                    status: 'Aberta',
+                    data_abertura: hoje,
+                    data_fechamento: null
+                });
+                console.log('✅ Nova etiqueta criada!');
+            }
+            
+            fecharModal('modal-etiqueta');
+            carregarPagina(paginaAtual);
+        }
+        
+        // ================================================================
+        // ATUALIZAR STATUS
+        // ================================================================
+        function atualizarStatus(id, novoStatus) {
+            console.log('📝 Atualizando status:', id, '->', novoStatus);
+            const etiqueta = etiquetas.find(e => e.id === id);
+            if (etiqueta) {
+                etiqueta.status = novoStatus;
+                if (novoStatus === 'Concluída') {
+                    etiqueta.data_fechamento = new Date().toLocaleDateString('pt-BR');
+                }
+                carregarPagina(paginaAtual);
+            }
+        }
+        
+        // ================================================================
+        // DELETAR ETIQUETA
+        // ================================================================
+        function deletarEtiqueta(id) {
+            if (confirm('Deseja excluir esta etiqueta?')) {
+                etiquetas = etiquetas.filter(e => e.id !== id);
+                carregarPagina(paginaAtual);
+            }
+        }
+        
+        // ================================================================
+        // FILTRAR ETIQUETAS
+        // ================================================================
+        function filtrarEtiquetas() {
+            const tipo = document.getElementById('filtro-tipo').value;
+            const status = document.getElementById('filtro-status').value;
+            const rows = document.querySelectorAll('#tabela-etiquetas-body tr');
+            
+            rows.forEach(row => {
+                if (row.cells.length === 1) return;
+                const rowTipo = row.dataset.tipo || '';
+                const rowStatus = row.dataset.status || '';
+                let mostrar = true;
+                if (tipo && rowTipo !== tipo) mostrar = false;
+                if (status && rowStatus !== status) mostrar = false;
+                row.style.display = mostrar ? '' : 'none';
+            });
+        }
+        
+        // ================================================================
+        // MÓDULOS VAZIOS (para navegação)
+        // ================================================================
+        function carregarGA() {
+            document.getElementById('page-content').innerHTML = `
+                <div style="text-align:center;padding:60px;color:var(--text-muted);background:var(--bg-card);border-radius:var(--border-radius);">
+                    <div style="font-size:48px;margin-bottom:16px;">👥</div>
+                    <h3>Grupo Autônomo (GA)</h3>
+                    <p style="margin-top:8px;">Módulo em desenvolvimento</p>
+                    <button class="btn btn-primary" style="margin-top:20px;" onclick="alert('Em desenvolvimento!')">+ Nova Reunião</button>
                 </div>
-                <div class="form-actions">
-                    <button type="button" class="btn btn-secondary" onclick="fecharModal('modal-acidente')">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">💾 Salvar</button>
+            `;
+        }
+        
+        function carregarMelhorias() {
+            document.getElementById('page-content').innerHTML = `
+                <div style="text-align:center;padding:60px;color:var(--text-muted);background:var(--bg-card);border-radius:var(--border-radius);">
+                    <div style="font-size:48px;margin-bottom:16px;">📈</div>
+                    <h3>Ver & Agir / LUP'S</h3>
+                    <p style="margin-top:8px;">Módulo em desenvolvimento</p>
+                    <button class="btn btn-primary" style="margin-top:20px;" onclick="alert('Em desenvolvimento!')">+ Nova Melhoria</button>
                 </div>
-            </form>
-        </div>
-    </div>
-    
-    <!-- ============================================ -->
-    <!-- SCRIPTS -->
-    <!-- ============================================ -->
-    <script src="js/api.js"></script>
-    <script src="js/app.js"></script>
-    <script src="js/etiquetas.js"></script>
-    <script src="js/ga.js"></script>
-    <script src="js/melhorias.js"></script>
-    <script src="js/acidentes.js"></script>
+            `;
+        }
+        
+        function carregarAcidentes() {
+            document.getElementById('page-content').innerHTML = `
+                <div style="text-align:center;padding:60px;color:var(--text-muted);background:var(--bg-card);border-radius:var(--border-radius);">
+                    <div style="font-size:48px;margin-bottom:16px;">⚠️</div>
+                    <h3>Quase Acidentes</h3>
+                    <p style="margin-top:8px;">Módulo em desenvolvimento</p>
+                    <button class="btn btn-primary" style="margin-top:20px;" onclick="alert('Em desenvolvimento!')">+ Registrar</button>
+                </div>
+            `;
+        }
+        
+        // ================================================================
+        // INICIALIZAR
+        // ================================================================
+        carregarPagina('dashboard');
+        
+        // Fechar modais com ESC
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
+                document.body.style.overflow = 'auto';
+            }
+        });
+        
+        console.log('✅ SIMFlow pronto!');
+        console.log('📋 Etiquetas:', etiquetas);
+    </script>
 </body>
 </html>
