@@ -28,75 +28,109 @@
             </header>
             
             <section id="page-content">
-                <!-- Cards Dashboard -->
-                <div class="dashboard-cards">
-                    <div class="card">
-                        <h3>Etiquetas Abertas</h3>
-                        <p class="number" id="total-abertas">0</p>
-                    </div>
-                    <div class="card">
-                        <h3>Vermelhas</h3>
-                        <p class="number" id="total-vermelhas">0</p>
-                    </div>
-                    <div class="card">
-                        <h3>Azuis</h3>
-                        <p class="number" id="total-azuis">0</p>
-                    </div>
-                    <div class="card">
-                        <h3>Próxima Reunião GA</h3>
-                        <p id="proxima-reuniao">--/--/----</p>
-                    </div>
-                </div>
-                
-                <!-- Lista de Etiquetas Recentes -->
-                <div class="table-container">
-                    <h3>Últimas Etiquetas</h3>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Título</th>
-                                <th>Tipo</th>
-                                <th>Status</th>
-                                <th>Data</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabela-etiquetas">
-                            <!-- Preenchido via JS -->
-                        </tbody>
-                    </table>
-                </div>
+                <!-- Conteúdo dinâmico -->
             </section>
         </main>
     </div>
     
-    <!-- Modal para criar nova etiqueta -->
+    <!-- ============================================ -->
+    <!-- MODAL - ETIQUETA -->
+    <!-- ============================================ -->
     <div id="modal" class="modal">
         <div class="modal-content">
-            <span class="close">&times;</span>
+            <span class="close" onclick="fecharModal()">&times;</span>
             <h2>Nova Etiqueta</h2>
             <form id="form-etiqueta">
-                <input type="text" id="titulo" placeholder="Título" required>
-                <textarea id="descricao" placeholder="Descrição" required></textarea>
-                <select id="tipo" required>
+                <input type="text" id="etiqueta-titulo" placeholder="Título" required>
+                <textarea id="etiqueta-descricao" placeholder="Descrição" required></textarea>
+                <select id="etiqueta-tipo" required>
                     <option value="">Tipo</option>
                     <option value="Azul">Azul - Operador resolve</option>
                     <option value="Vermelha">Vermelha - Manutenção</option>
                 </select>
-                <select id="linha">
+                <select id="etiqueta-linha">
                     <option value="TREPKO">TREPKO</option>
                     <option value="SERAC">SERAC</option>
                 </select>
-                <input type="text" id="responsavel" placeholder="Responsável">
-                <input type="text" id="via" placeholder="Via (Controle/Manutenção)">
-                <textarea id="observacoes" placeholder="Observações"></textarea>
+                <input type="text" id="etiqueta-responsavel" placeholder="Responsável">
+                <input type="text" id="etiqueta-via" placeholder="Via (Controle/Manutenção)">
+                <textarea id="etiqueta-observacoes" placeholder="Observações"></textarea>
                 <button type="submit" class="btn-primary">Salvar</button>
             </form>
         </div>
     </div>
     
+    <!-- ============================================ -->
+    <!-- MODAL - GA (Grupo Autônomo) -->
+    <!-- ============================================ -->
+    <div id="modal-ga" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="fecharModalGA()">&times;</span>
+            <h2>Nova Reunião GA</h2>
+            <form id="form-ga">
+                <input type="hidden" id="ga-id">
+                <input type="date" id="ga-data" required>
+                <input type="text" id="ga-pauta" placeholder="Pauta da Reunião" required>
+                <input type="text" id="ga-participantes" placeholder="Participantes (separados por vírgula)">
+                <textarea id="ga-decisoes" placeholder="Decisões tomadas" rows="3"></textarea>
+                <input type="number" id="ga-acoes" placeholder="Número de ações geradas" min="0">
+                <button type="submit" class="btn-primary">Salvar</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- ============================================ -->
+    <!-- MODAL - MELHORIA (Ver & Agir / LUP'S) -->
+    <!-- ============================================ -->
+    <div id="modal-melhoria" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="fecharModalMelhoria()">&times;</span>
+            <h2>Nova Melhoria</h2>
+            <form id="form-melhoria">
+                <input type="hidden" id="melhoria-id">
+                <input type="text" id="melhoria-titulo" placeholder="Título" required>
+                <textarea id="melhoria-descricao" placeholder="Descrição" required rows="3"></textarea>
+                <select id="melhoria-categoria" required>
+                    <option value="Ver & Agir">Ver & Agir</option>
+                    <option value="LUP">LUP - Lição de Um Ponto</option>
+                </select>
+                <input type="text" id="melhoria-imagem-antes" placeholder="URL imagem ANTES (opcional)">
+                <input type="text" id="melhoria-imagem-depois" placeholder="URL imagem DEPOIS (opcional)">
+                <button type="submit" class="btn-primary">Salvar</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- ============================================ -->
+    <!-- MODAL - QUASE ACIDENTE -->
+    <!-- ============================================ -->
+    <div id="modal-acidente" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="fecharModalAcidente()">&times;</span>
+            <h2>Registrar Quase Acidente</h2>
+            <form id="form-acidente">
+                <input type="hidden" id="acidente-id">
+                <textarea id="acidente-descricao" placeholder="Descrição do ocorrido" required rows="3"></textarea>
+                <input type="text" id="acidente-local" placeholder="Local" required>
+                <input type="text" id="acidente-responsavel" placeholder="Responsável pelo registro" required>
+                <select id="acidente-status">
+                    <option value="Reportado">Reportado</option>
+                    <option value="Em Análise">Em Análise</option>
+                    <option value="Resolvido">Resolvido</option>
+                </select>
+                <button type="submit" class="btn-primary">Salvar</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- ============================================ -->
+    <!-- SCRIPTS -->
+    <!-- ============================================ -->
     <script src="js/api.js"></script>
     <script src="js/app.js"></script>
     <script src="js/etiquetas.js"></script>
+    <script src="js/ga.js"></script>
+    <script src="js/melhorias.js"></script>
+    <script src="js/acidentes.js"></script>
 </body>
 </html>
