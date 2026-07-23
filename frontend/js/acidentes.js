@@ -5,11 +5,14 @@
 let acidentesData = [];
 let acidenteIdCounter = 1;
 
+console.log('⚠️ Módulo Acidentes carregado!');
+
 // ================================================================
 // CARREGAR LISTA
 // ================================================================
 
 function carregarListaAcidentes() {
+    console.log('⚠️ carregarListaAcidentes chamado');
     const content = document.getElementById('page-content');
     
     let html = `
@@ -17,7 +20,7 @@ function carregarListaAcidentes() {
             <div class="table-header">
                 <h3>⚠️ Registro de Quase Acidentes</h3>
                 <div class="table-filters">
-                    <select id="filtro-status-acidente" onchange="filtrarAcidentes()">
+                    <select id="filtro-status-acidente" onchange="window.filtrarAcidentes()">
                         <option value="">Todos</option>
                         <option value="Reportado">📢 Reportado</option>
                         <option value="Em Análise">🔍 Em Análise</option>
@@ -68,11 +71,11 @@ function carregarListaAcidentes() {
                     <td>
                         <div style="display: flex; gap: 4px; flex-wrap: wrap;">
                             ${a.status !== 'Resolvido' ? `
-                                <button class="btn btn-sm btn-primary" onclick="atualizarStatusAcidente(${a.id}, 'Em Análise')">Analisar</button>
-                                <button class="btn btn-sm btn-success" onclick="atualizarStatusAcidente(${a.id}, 'Resolvido')">Resolver</button>
+                                <button class="btn btn-sm btn-primary" onclick="window.atualizarStatusAcidente(${a.id}, 'Em Análise')">Analisar</button>
+                                <button class="btn btn-sm btn-success" onclick="window.atualizarStatusAcidente(${a.id}, 'Resolvido')">Resolver</button>
                             ` : ''}
-                            <button class="btn btn-sm btn-secondary" onclick="editarAcidente(${a.id})">✏️</button>
-                            <button class="btn btn-sm btn-danger" onclick="deletarAcidente(${a.id})">🗑️</button>
+                            <button class="btn btn-sm btn-secondary" onclick="window.editarAcidente(${a.id})">✏️</button>
+                            <button class="btn btn-sm btn-danger" onclick="window.deletarAcidente(${a.id})">🗑️</button>
                         </div>
                     </td>
                 </tr>
@@ -88,6 +91,7 @@ function carregarListaAcidentes() {
     `;
     
     content.innerHTML = html;
+    console.log('✅ Lista de acidentes atualizada com', acidentesData.length, 'itens');
 }
 
 // ================================================================
@@ -95,8 +99,14 @@ function carregarListaAcidentes() {
 // ================================================================
 
 function abrirModalAcidenteReal(dados = null) {
+    console.log('📝 abrirModalAcidenteReal chamado', dados);
     const modal = document.getElementById('modal-acidente');
     const form = document.getElementById('form-acidente');
+    
+    if (!modal || !form) {
+        console.error('❌ Modal ou formulário Acidente não encontrado');
+        return;
+    }
     
     form.reset();
     document.getElementById('acidente-id').value = '';
@@ -104,14 +114,15 @@ function abrirModalAcidenteReal(dados = null) {
     
     if (dados) {
         document.getElementById('acidente-id').value = dados.id;
-        document.getElementById('acidente-descricao').value = dados.descricao;
-        document.getElementById('acidente-local').value = dados.local;
-        document.getElementById('acidente-responsavel').value = dados.responsavel;
-        document.getElementById('acidente-status').value = dados.status;
+        document.getElementById('acidente-descricao').value = dados.descricao || '';
+        document.getElementById('acidente-local').value = dados.local || '';
+        document.getElementById('acidente-responsavel').value = dados.responsavel || '';
+        document.getElementById('acidente-status').value = dados.status || 'Reportado';
     }
     
     modal.style.display = 'flex';
     document.body.style.overflow = 'hidden';
+    console.log('✅ Modal Acidente aberto');
 }
 
 // ================================================================
@@ -123,6 +134,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (form) {
         form.addEventListener('submit', function(e) {
             e.preventDefault();
+            console.log('📝 Formulário Acidente submetido');
             
             const id = document.getElementById('acidente-id').value;
             const hoje = new Date().toLocaleDateString('pt-BR');
@@ -134,17 +146,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 status: document.getElementById('acidente-status').value
             };
             
+            console.log('📝 Dados Acidente:', dados);
+            
             if (id) {
                 const index = acidentesData.findIndex(a => a.id === parseInt(id));
                 if (index !== -1) {
                     acidentesData[index] = { ...acidentesData[index], ...dados };
+                    console.log('✅ Acidente atualizado:', id);
                 }
             } else {
-                acidentesData.push({
-                    id: acidenteIdCounter++,
-                    ...dados,
-                    data: hoje
-                });
+                const novoAcidente = { id: acidenteIdCounter++, ...dados, data: hoje };
+                acidentesData.push(novoAcidente);
+                console.log('✅ Novo acidente criado:', novoAcidente);
             }
             
             fecharModal('modal-acidente');
@@ -158,10 +171,14 @@ document.addEventListener('DOMContentLoaded', function() {
 // ================================================================
 
 function atualizarStatusAcidente(id, novoStatus) {
+    console.log('📝 Atualizando status do acidente', id, 'para', novoStatus);
     const acidente = acidentesData.find(a => a.id === id);
     if (acidente) {
         acidente.status = novoStatus;
+        console.log('✅ Status atualizado:', acidente);
         carregarPagina(paginaAtual);
+    } else {
+        console.error('❌ Acidente não encontrado:', id);
     }
 }
 
@@ -170,9 +187,12 @@ function atualizarStatusAcidente(id, novoStatus) {
 // ================================================================
 
 function editarAcidente(id) {
+    console.log('✏️ Editando acidente', id);
     const acidente = acidentesData.find(a => a.id === id);
     if (acidente) {
         abrirModalAcidenteReal(acidente);
+    } else {
+        console.error('❌ Acidente não encontrado:', id);
     }
 }
 
@@ -181,9 +201,14 @@ function editarAcidente(id) {
 // ================================================================
 
 function deletarAcidente(id) {
+    console.log('🗑️ Deletando acidente', id);
     if (confirm('Deseja realmente excluir este registro?')) {
-        acidentesData = acidentesData.filter(a => a.id !== id);
-        carregarPagina(paginaAtual);
+        const index = acidentesData.findIndex(a => a.id === id);
+        if (index !== -1) {
+            acidentesData.splice(index, 1);
+            console.log('✅ Acidente deletado:', id);
+            carregarPagina(paginaAtual);
+        }
     }
 }
 
@@ -192,12 +217,12 @@ function deletarAcidente(id) {
 // ================================================================
 
 function filtrarAcidentes() {
+    console.log('🔍 Filtrando acidentes');
     const status = document.getElementById('filtro-status-acidente').value;
     const rows = document.querySelectorAll('#tabela-acidentes-body tr');
     
     rows.forEach(row => {
         if (row.cells.length === 1) return;
-        
         const rowStatus = row.dataset.status || '';
         if (status && rowStatus !== status) {
             row.style.display = 'none';
@@ -207,10 +232,12 @@ function filtrarAcidentes() {
     });
 }
 
-// Sobrescrever funções globais
+// EXPORTA FUNÇÕES PARA O ESCOPO GLOBAL
 window.carregarListaAcidentes = carregarListaAcidentes;
 window.abrirModalAcidenteReal = abrirModalAcidenteReal;
 window.atualizarStatusAcidente = atualizarStatusAcidente;
 window.editarAcidente = editarAcidente;
 window.deletarAcidente = deletarAcidente;
 window.filtrarAcidentes = filtrarAcidentes;
+
+console.log('✅ Acidentes.js carregado e funções exportadas!');
