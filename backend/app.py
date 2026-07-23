@@ -15,16 +15,23 @@ CORS(app)  # Permite frontend consumir API
 def health():
     return jsonify({"status": "online", "mensagem": "SIMFlow API rodando!"})
 
-from routes.acidentes import acidentes_bp
 # Importar e registrar as rotas
-from routes.etiquetas import etiquetas_bp
-from routes.ga import ga_bp
-from routes.melhorias import melhorias_bp
-
-app.register_blueprint(etiquetas_bp, url_prefix='/api/etiquetas')
-app.register_blueprint(ga_bp, url_prefix='/api/ga')
-app.register_blueprint(melhorias_bp, url_prefix='/api/melhorias')
-app.register_blueprint(acidentes_bp, url_prefix='/api/acidentes')
+try:
+    from routes.acidentes import acidentes_bp
+    from routes.etiquetas import etiquetas_bp
+    from routes.ga import ga_bp
+    from routes.melhorias import melhorias_bp
+    
+    app.register_blueprint(etiquetas_bp, url_prefix='/api/etiquetas')
+    app.register_blueprint(ga_bp, url_prefix='/api/ga')
+    app.register_blueprint(melhorias_bp, url_prefix='/api/melhorias')
+    app.register_blueprint(acidentes_bp, url_prefix='/api/acidentes')
+    
+    print("✅ Todas as rotas registradas com sucesso!")
+    
+except ImportError as e:
+    print(f"❌ Erro ao importar rotas: {e}")
+    print("Verifique se todos os arquivos existem e têm os Blueprints corretos")
 
 if __name__ == '__main__':
     port = int(os.getenv('PORT', 5000))
