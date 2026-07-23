@@ -9,6 +9,12 @@ let paginaAtual = 'dashboard';
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🚀 SIMFlow iniciado!');
     
+    // Verificar se as funções dos módulos estão disponíveis
+    console.log('✅ Etiquetas carregado:', typeof carregarListaEtiquetas !== 'undefined');
+    console.log('✅ GA carregado:', typeof carregarListaGA !== 'undefined');
+    console.log('✅ Melhorias carregado:', typeof carregarListaMelhorias !== 'undefined');
+    console.log('✅ Acidentes carregado:', typeof carregarListaAcidentes !== 'undefined');
+    
     // Configurar navegação
     configurarNavegacao();
     
@@ -35,6 +41,8 @@ function configurarNavegacao() {
 }
 
 function carregarPagina(pagina) {
+    console.log('📄 Carregando página:', pagina);
+    
     // Atualizar menu
     document.querySelectorAll('.sidebar-nav ul li').forEach(item => {
         item.classList.remove('active');
@@ -83,6 +91,12 @@ function carregarPagina(pagina) {
         case 'acidentes':
             carregarAcidentes();
             break;
+        default:
+            document.getElementById('page-content').innerHTML = `
+                <div style="text-align:center; padding: 60px; color: var(--text-muted);">
+                    <h3>Página em construção</h3>
+                </div>
+            `;
     }
 }
 
@@ -94,6 +108,7 @@ function configurarBotaoNovo() {
     const btnNovo = document.getElementById('btn-novo');
     btnNovo.addEventListener('click', function() {
         const pagina = paginaAtual;
+        console.log('➕ Botão Novo clicado na página:', pagina);
         
         switch(pagina) {
             case 'etiquetas':
@@ -122,8 +137,10 @@ function abrirModal(modalId) {
     const modal = document.getElementById(modalId);
     if (modal) {
         modal.style.display = 'flex';
-        // Impedir scroll do body
         document.body.style.overflow = 'hidden';
+        console.log('📂 Modal aberto:', modalId);
+    } else {
+        console.error('❌ Modal não encontrado:', modalId);
     }
 }
 
@@ -132,6 +149,7 @@ function fecharModal(modalId) {
     if (modal) {
         modal.style.display = 'none';
         document.body.style.overflow = 'auto';
+        console.log('📂 Modal fechado:', modalId);
     }
 }
 
@@ -154,92 +172,136 @@ document.addEventListener('keydown', function(e) {
 });
 
 // ================================================================
-// FUNÇÕES QUE SERÃO SOBRESCRITAS PELOS MÓDULOS
+// FUNÇÕES DE CARREGAMENTO (Chamam os módulos)
 // ================================================================
 
 function carregarDashboard() {
-    // Será implementada em etiquetas.js
-    if (typeof carregarDashboardReal === 'function') {
-        carregarDashboardReal();
+    console.log('📊 Carregando Dashboard...');
+    const content = document.getElementById('page-content');
+    
+    // Verificar se a função existe
+    if (typeof window.carregarDashboardReal === 'function') {
+        window.carregarDashboardReal();
     } else {
-        document.getElementById('page-content').innerHTML = `
-            <div class="loading">Carregando dashboard...</div>
+        console.error('❌ Função carregarDashboardReal não encontrada');
+        content.innerHTML = `
+            <div style="text-align:center; padding: 60px; color: var(--text-muted);">
+                <h3>⚠️ Erro ao carregar Dashboard</h3>
+                <p>Recarregue a página (F5) e tente novamente.</p>
+            </div>
         `;
     }
 }
 
 function carregarEtiquetas() {
-    if (typeof carregarListaEtiquetas === 'function') {
-        carregarListaEtiquetas();
+    console.log('🏷️ Carregando Etiquetas...');
+    if (typeof window.carregarListaEtiquetas === 'function') {
+        window.carregarListaEtiquetas();
     } else {
+        console.error('❌ Função carregarListaEtiquetas não encontrada');
         document.getElementById('page-content').innerHTML = `
-            <div class="loading">Carregando etiquetas...</div>
+            <div style="text-align:center; padding: 60px; color: var(--text-muted);">
+                <h3>⚠️ Erro ao carregar Etiquetas</h3>
+                <p>Recarregue a página (F5) e tente novamente.</p>
+            </div>
         `;
     }
 }
 
 function carregarGA() {
-    if (typeof carregarListaGA === 'function') {
-        carregarListaGA();
+    console.log('👥 Carregando GA...');
+    if (typeof window.carregarListaGA === 'function') {
+        window.carregarListaGA();
     } else {
+        console.error('❌ Função carregarListaGA não encontrada');
         document.getElementById('page-content').innerHTML = `
-            <div class="loading">Carregando reuniões GA...</div>
+            <div style="text-align:center; padding: 60px; color: var(--text-muted);">
+                <h3>⚠️ Erro ao carregar GA</h3>
+                <p>Recarregue a página (F5) e tente novamente.</p>
+            </div>
         `;
     }
 }
 
 function carregarMelhorias() {
-    if (typeof carregarListaMelhorias === 'function') {
-        carregarListaMelhorias();
+    console.log('📈 Carregando Melhorias...');
+    if (typeof window.carregarListaMelhorias === 'function') {
+        window.carregarListaMelhorias();
     } else {
+        console.error('❌ Função carregarListaMelhorias não encontrada');
         document.getElementById('page-content').innerHTML = `
-            <div class="loading">Carregando melhorias...</div>
+            <div style="text-align:center; padding: 60px; color: var(--text-muted);">
+                <h3>⚠️ Erro ao carregar Melhorias</h3>
+                <p>Recarregue a página (F5) e tente novamente.</p>
+            </div>
         `;
     }
 }
 
 function carregarAcidentes() {
-    if (typeof carregarListaAcidentes === 'function') {
-        carregarListaAcidentes();
+    console.log('⚠️ Carregando Acidentes...');
+    if (typeof window.carregarListaAcidentes === 'function') {
+        window.carregarListaAcidentes();
     } else {
+        console.error('❌ Função carregarListaAcidentes não encontrada');
         document.getElementById('page-content').innerHTML = `
-            <div class="loading">Carregando quase acidentes...</div>
+            <div style="text-align:center; padding: 60px; color: var(--text-muted);">
+                <h3>⚠️ Erro ao carregar Acidentes</h3>
+                <p>Recarregue a página (F5) e tente novamente.</p>
+            </div>
         `;
     }
 }
 
 // ================================================================
-// FUNÇÕES PARA ABRIR MODAIS (SERÃO SOBRESCRITAS)
+// FUNÇÕES PARA ABRIR MODAIS (Chamam os módulos)
 // ================================================================
 
 function abrirModalEtiqueta(dados) {
-    if (typeof abrirModalEtiquetaReal === 'function') {
-        abrirModalEtiquetaReal(dados);
+    console.log('📝 Abrindo modal Etiqueta...');
+    if (typeof window.abrirModalEtiquetaReal === 'function') {
+        window.abrirModalEtiquetaReal(dados);
     } else {
+        console.error('❌ Função abrirModalEtiquetaReal não encontrada');
         abrirModal('modal-etiqueta');
     }
 }
 
 function abrirModalGA(dados) {
-    if (typeof abrirModalGAReal === 'function') {
-        abrirModalGAReal(dados);
+    console.log('📝 Abrindo modal GA...');
+    if (typeof window.abrirModalGAReal === 'function') {
+        window.abrirModalGAReal(dados);
     } else {
+        console.error('❌ Função abrirModalGAReal não encontrada');
         abrirModal('modal-ga');
     }
 }
 
 function abrirModalMelhoria(dados) {
-    if (typeof abrirModalMelhoriaReal === 'function') {
-        abrirModalMelhoriaReal(dados);
+    console.log('📝 Abrindo modal Melhoria...');
+    if (typeof window.abrirModalMelhoriaReal === 'function') {
+        window.abrirModalMelhoriaReal(dados);
     } else {
+        console.error('❌ Função abrirModalMelhoriaReal não encontrada');
         abrirModal('modal-melhoria');
     }
 }
 
 function abrirModalAcidente(dados) {
-    if (typeof abrirModalAcidenteReal === 'function') {
-        abrirModalAcidenteReal(dados);
+    console.log('📝 Abrindo modal Acidente...');
+    if (typeof window.abrirModalAcidenteReal === 'function') {
+        window.abrirModalAcidenteReal(dados);
     } else {
+        console.error('❌ Função abrirModalAcidenteReal não encontrada');
         abrirModal('modal-acidente');
     }
 }
+
+// EXPORTA FUNÇÕES PARA O ESCOPO GLOBAL
+window.carregarPagina = carregarPagina;
+window.abrirModal = abrirModal;
+window.fecharModal = fecharModal;
+window.abrirModalEtiqueta = abrirModalEtiqueta;
+window.abrirModalGA = abrirModalGA;
+window.abrirModalMelhoria = abrirModalMelhoria;
+window.abrirModalAcidente = abrirModalAcidente;
