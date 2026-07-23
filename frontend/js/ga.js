@@ -1,19 +1,23 @@
-// ============================================
-// MÓDULO GA - Grupo Autônomo
-// ============================================
+// ================================================================
+// GA.JS - MÓDULO GRUPO AUTÔNOMO
+// ================================================================
 
-async function carregarGA() {
+let gaData = [];
+let gaIdCounter = 1;
+
+// ================================================================
+// CARREGAR LISTA
+// ================================================================
+
+function carregarListaGA() {
     const content = document.getElementById('page-content');
     
-    try {
-        const reunioes = await GAAPI.listar();
-        
-        let html = `
-            <div style="margin-bottom: 20px;">
-                <button onclick="abrirModalGA()" class="btn-primary">+ Nova Reunião GA</button>
+    let html = `
+        <div class="table-container">
+            <div class="table-header">
+                <h3>👥 Reuniões do GA</h3>
             </div>
-            <div class="table-container">
-                <h3>Reuniões do Grupo Autônomo</h3>
+            <div class="table-wrapper">
                 <table>
                     <thead>
                         <tr>
@@ -27,73 +31,83 @@ async function carregarGA() {
                         </tr>
                     </thead>
                     <tbody>
-        `;
-        
-        if (reunioes.length === 0) {
-            html += `<tr><td colspan="7" style="text-align: center;">Nenhuma reunião cadastrada</td></tr>`;
-        } else {
-            reunioes.forEach(r => {
-                html += `
-                    <tr>
-                        <td>#${r.id}</td>
-                        <td>${r.data}</td>
-                        <td>${r.pauta}</td>
-                        <td>${r.participantes}</td>
-                        <td>${r.decisoes.substring(0, 50)}...</td>
-                        <td>${r.acoes_geradas}</td>
-                        <td>
-                            <button onclick="editarGA(${r.id})" class="btn-small">✏️</button>
-                            <button onclick="deletarGA(${r.id})" class="btn-small btn-danger">🗑️</button>
-                        </td>
-                    </tr>
-                `;
-            });
-        }
-        
+    `;
+    
+    if (gaData.length === 0) {
         html += `
+            <tr>
+                <td colspan="7" style="text-align: center; padding: 40px; color: var(--text-muted);">
+                    Nenhuma reunião cadastrada. Clique em "+ Novo" para criar!
+                </td>
+            </tr>
+        `;
+    } else {
+        gaData.forEach(r => {
+            html += `
+                <tr>
+                    <td>#${r.id}</td>
+                    <td>${r.data}</td>
+                    <td><strong>${r.pauta}</strong></td>
+                    <td>${r.participantes || '-'}</td>
+                    <td>${r.decisoes ? r.decisoes.substring(0, 50) + (r.decisoes.length > 50 ? '...' : '') : '-'}</td>
+                    <td><span class="badge badge-info">${r.acoes_geradas || 0}</span></td>
+                    <td>
+                        <div style="display: flex; gap: 4px;">
+                            <button class="btn btn-sm btn-secondary" onclick="editarGA(${r.id})">✏️</button>
+                            <button class="btn btn-sm btn-danger" onclick="deletarGA(${r.id})">🗑️</button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        });
+    }
+    
+    html += `
                     </tbody>
                 </table>
             </div>
-        `;
-        
-        content.innerHTML = html;
-        
-    } catch (error) {
-        content.innerHTML = `<p>Erro ao carregar reuniões: ${error.message}</p>`;
-    }
+        </div>
+    `;
+    
+    content.innerHTML = html;
 }
 
-// Modal para criar/editar GA
-function abrirModalGA(dados = null) {
+// ================================================================
+// ABRIR MODAL
+// ================================================================
+
+function abrirModalGAReal(dados = null) {
     const modal = document.getElementById('modal-ga');
     const form = document.getElementById('form-ga');
     
-    // Preencher dados se for edição
+    form.reset();
+    document.getElementById('ga-id').value = '';
+    
+    // Data padrão = hoje
+    const hoje = new Date().toISOString().split('T')[0];
+    document.getElementById('ga-data').value = hoje;
+    
     if (dados) {
         document.getElementById('ga-id').value = dados.id;
         document.getElementById('ga-data').value = dados.data;
         document.getElementById('ga-pauta').value = dados.pauta;
-        document.getElementById('ga-participantes').value = dados.participantes;
-        document.getElementById('ga-decisoes').value = dados.decisoes;
-        document.getElementById('ga-acoes').value = dados.acoes_geradas;
-    } else {
-        form.reset();
-        document.getElementById('ga-id').value = '';
+        document.getElementById('ga-participantes').value = dados.participantes || '';
+        document.getElementById('ga-decisoes').value = dados.decisoes || '';
+        document.getElementById('ga-acoes').value = dados.acoes_geradas || 0;
     }
     
     modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
 }
 
-// Fechar modal GA
-function fecharModalGA() {
-    document.getElementById('modal-ga').style.display = 'none';
-}
+// ================================================================
+// SALVAR GA
+// ================================================================
 
-// Salvar GA
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('form-ga');
     if (form) {
-        form.addEventListener('submit', async function(e) {
+        form.addEventListener('submit', function(e) {
             e.preventDefault();
             
             const id = document.getElementById('ga-id').value;
@@ -101,43 +115,4 @@ document.addEventListener('DOMContentLoaded', function() {
                 data: document.getElementById('ga-data').value,
                 pauta: document.getElementById('ga-pauta').value,
                 participantes: document.getElementById('ga-participantes').value,
-                decisoes: document.getElementById('ga-decisoes').value,
-                acoes_geradas: parseInt(document.getElementById('ga-acoes').value) || 0
-            };
-            
-            try {
-                if (id) {
-                    await GAAPI.atualizar(parseInt(id), dados);
-                } else {
-                    await GAAPI.criar(dados);
-                }
-                fecharModalGA();
-                carregarGA();
-            } catch (error) {
-                alert('Erro ao salvar: ' + error.message);
-            }
-        });
-    }
-});
-
-// Editar GA
-async function editarGA(id) {
-    try {
-        const dados = await GAAPI.buscar(id);
-        abrirModalGA(dados);
-    } catch (error) {
-        alert('Erro ao carregar dados: ' + error.message);
-    }
-}
-
-// Deletar GA
-async function deletarGA(id) {
-    if (confirm('Deseja realmente deletar esta reunião?')) {
-        try {
-            await GAAPI.deletar(id);
-            carregarGA();
-        } catch (error) {
-            alert('Erro ao deletar: ' + error.message);
-        }
-    }
-}
+                decisoes: document.getElementById('ga-de
