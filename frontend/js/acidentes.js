@@ -1,19 +1,31 @@
-// ============================================
-// MÓDULO QUASE ACIDENTES
-// ============================================
+// ================================================================
+// ACIDENTES.JS - MÓDULO QUASE ACIDENTES
+// ================================================================
 
-async function carregarAcidentes() {
+let acidentesData = [];
+let acidenteIdCounter = 1;
+
+// ================================================================
+// CARREGAR LISTA
+// ================================================================
+
+function carregarListaAcidentes() {
     const content = document.getElementById('page-content');
     
-    try {
-        const acidentes = await AcidentesAPI.listar();
-        
-        let html = `
-            <div style="margin-bottom: 20px;">
-                <button onclick="abrirModalAcidente()" class="btn-primary">+ Registrar Quase Acidente</button>
+    let html = `
+        <div class="table-container">
+            <div class="table-header">
+                <h3>⚠️ Registro de Quase Acidentes</h3>
+                <div class="table-filters">
+                    <select id="filtro-status-acidente" onchange="filtrarAcidentes()">
+                        <option value="">Todos</option>
+                        <option value="Reportado">📢 Reportado</option>
+                        <option value="Em Análise">🔍 Em Análise</option>
+                        <option value="Resolvido">✅ Resolvido</option>
+                    </select>
+                </div>
             </div>
-            <div class="table-container">
-                <h3>Registro de Quase Acidentes</h3>
+            <div class="table-wrapper">
                 <table>
                     <thead>
                         <tr>
@@ -26,54 +38,69 @@ async function carregarAcidentes() {
                             <th>Ações</th>
                         </tr>
                     </thead>
-                    <tbody>
-        `;
-        
-        if (acidentes.length === 0) {
-            html += `<tr><td colspan="7" style="text-align: center;">Nenhum quase acidente registrado</td></tr>`;
-        } else {
-            acidentes.forEach(a => {
-                const statusClass = {
-                    'Reportado': 'status-aberta',
-                    'Em Análise': 'status-analise',
-                    'Resolvido': 'status-concluida'
-                }[a.status] || '';
-                
-                html += `
-                    <tr>
-                        <td>#${a.id}</td>
-                        <td>${a.descricao}</td>
-                        <td>${a.local}</td>
-                        <td>${a.responsavel}</td>
-                        <td><span class="${statusClass}">${a.status}</span></td>
-                        <td>${new Date(a.data).toLocaleDateString()}</td>
-                        <td>
-                            <button onclick="editarAcidente(${a.id})" class="btn-small">✏️</button>
-                            <button onclick="deletarAcidente(${a.id})" class="btn-small btn-danger">🗑️</button>
-                            <button onclick="atualizarStatusAcidente(${a.id}, 'Em Análise')" class="btn-small">Analisar</button>
-                            <button onclick="atualizarStatusAcidente(${a.id}, 'Resolvido')" class="btn-small btn-success">Resolver</button>
-                        </td>
-                    </tr>
-                `;
-            });
-        }
-        
+                    <tbody id="tabela-acidentes-body">
+    `;
+    
+    if (acidentesData.length === 0) {
         html += `
+            <tr>
+                <td colspan="7" style="text-align: center; padding: 40px; color: var(--text-muted);">
+                    Nenhum quase acidente registrado. Clique em "+ Novo" para registrar!
+                </td>
+            </tr>
+        `;
+    } else {
+        acidentesData.forEach(a => {
+            const statusClass = {
+                'Reportado': 'status-aberta',
+                'Em Análise': 'status-em-analise',
+                'Resolvido': 'status-concluida'
+            }[a.status] || '';
+            
+            html += `
+                <tr data-status="${a.status}">
+                    <td>#${a.id}</td>
+                    <td>${a.descricao}</td>
+                    <td>${a.local}</td>
+                    <td>${a.responsavel}</td>
+                    <td><span class="${statusClass}">${a.status}</span></td>
+                    <td>${a.data}</td>
+                    <td>
+                        <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+                            ${a.status !== 'Resolvido' ? `
+                                <button class="btn btn-sm btn-primary" onclick="atualizarStatusAcidente(${a.id}, 'Em Análise')">Analisar</button>
+                                <button class="btn btn-sm btn-success" onclick="atualizarStatusAcidente(${a.id}, 'Resolvido')">Resolver</button>
+                            ` : ''}
+                            <button class="btn btn-sm btn-secondary" onclick="editarAcidente(${a.id})">✏️</button>
+                            <button class="btn btn-sm btn-danger" onclick="deletarAcidente(${a.id})">🗑️</button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        });
+    }
+    
+    html += `
                     </tbody>
                 </table>
             </div>
-        `;
-        
-        content.innerHTML = html;
-        
-    } catch (error) {
-        content.innerHTML = `<p>Erro ao carregar quase acidentes: ${error.message}</p>`;
-    }
+        </div>
+    `;
+    
+    content.innerHTML = html;
 }
 
-// Modal para criar/editar quase acidente
-function abrirModalAcidente(dados = null) {
+// ================================================================
+// ABRIR MODAL
+// ================================================================
+
+function abrirModalAcidenteReal(dados = null) {
     const modal = document.getElementById('modal-acidente');
+    const form = document.getElementById('form-acidente');
+    
+    form.reset();
+    document.getElementById('acidente-id').value = '';
+    document.getElementById('acidente-status').value = 'Reportado';
     
     if (dados) {
         document.getElementById('acidente-id').value = dados.id;
@@ -81,27 +108,25 @@ function abrirModalAcidente(dados = null) {
         document.getElementById('acidente-local').value = dados.local;
         document.getElementById('acidente-responsavel').value = dados.responsavel;
         document.getElementById('acidente-status').value = dados.status;
-    } else {
-        document.getElementById('form-acidente').reset();
-        document.getElementById('acidente-id').value = '';
-        document.getElementById('acidente-status').value = 'Reportado';
     }
     
     modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
 }
 
-function fecharModalAcidente() {
-    document.getElementById('modal-acidente').style.display = 'none';
-}
+// ================================================================
+// SALVAR ACIDENTE
+// ================================================================
 
-// Salvar Quase Acidente
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('form-acidente');
     if (form) {
-        form.addEventListener('submit', async function(e) {
+        form.addEventListener('submit', function(e) {
             e.preventDefault();
             
             const id = document.getElementById('acidente-id').value;
+            const hoje = new Date().toLocaleDateString('pt-BR');
+            
             const dados = {
                 descricao: document.getElementById('acidente-descricao').value,
                 local: document.getElementById('acidente-local').value,
@@ -109,49 +134,83 @@ document.addEventListener('DOMContentLoaded', function() {
                 status: document.getElementById('acidente-status').value
             };
             
-            try {
-                if (id) {
-                    await AcidentesAPI.atualizar(parseInt(id), dados);
-                } else {
-                    await AcidentesAPI.criar(dados);
+            if (id) {
+                const index = acidentesData.findIndex(a => a.id === parseInt(id));
+                if (index !== -1) {
+                    acidentesData[index] = { ...acidentesData[index], ...dados };
                 }
-                fecharModalAcidente();
-                carregarAcidentes();
-            } catch (error) {
-                alert('Erro ao salvar: ' + error.message);
+            } else {
+                acidentesData.push({
+                    id: acidenteIdCounter++,
+                    ...dados,
+                    data: hoje
+                });
             }
+            
+            fecharModal('modal-acidente');
+            carregarPagina(paginaAtual);
         });
     }
 });
 
-// Editar Quase Acidente
-async function editarAcidente(id) {
-    try {
-        const dados = await AcidentesAPI.buscar(id);
-        abrirModalAcidente(dados);
-    } catch (error) {
-        alert('Erro ao carregar dados: ' + error.message);
+// ================================================================
+// ATUALIZAR STATUS
+// ================================================================
+
+function atualizarStatusAcidente(id, novoStatus) {
+    const acidente = acidentesData.find(a => a.id === id);
+    if (acidente) {
+        acidente.status = novoStatus;
+        carregarPagina(paginaAtual);
     }
 }
 
-// Deletar Quase Acidente
-async function deletarAcidente(id) {
-    if (confirm('Deseja realmente deletar este registro?')) {
-        try {
-            await AcidentesAPI.deletar(id);
-            carregarAcidentes();
-        } catch (error) {
-            alert('Erro ao deletar: ' + error.message);
+// ================================================================
+// EDITAR ACIDENTE
+// ================================================================
+
+function editarAcidente(id) {
+    const acidente = acidentesData.find(a => a.id === id);
+    if (acidente) {
+        abrirModalAcidenteReal(acidente);
+    }
+}
+
+// ================================================================
+// DELETAR ACIDENTE
+// ================================================================
+
+function deletarAcidente(id) {
+    if (confirm('Deseja realmente excluir este registro?')) {
+        acidentesData = acidentesData.filter(a => a.id !== id);
+        carregarPagina(paginaAtual);
+    }
+}
+
+// ================================================================
+// FILTRAR ACIDENTES
+// ================================================================
+
+function filtrarAcidentes() {
+    const status = document.getElementById('filtro-status-acidente').value;
+    const rows = document.querySelectorAll('#tabela-acidentes-body tr');
+    
+    rows.forEach(row => {
+        if (row.cells.length === 1) return;
+        
+        const rowStatus = row.dataset.status || '';
+        if (status && rowStatus !== status) {
+            row.style.display = 'none';
+        } else {
+            row.style.display = '';
         }
-    }
+    });
 }
 
-// Atualizar status do quase acidente
-async function atualizarStatusAcidente(id, novoStatus) {
-    try {
-        await AcidentesAPI.atualizar(id, { status: novoStatus });
-        carregarAcidentes();
-    } catch (error) {
-        alert('Erro ao atualizar: ' + error.message);
-    }
-}
+// Sobrescrever funções globais
+window.carregarListaAcidentes = carregarListaAcidentes;
+window.abrirModalAcidenteReal = abrirModalAcidenteReal;
+window.atualizarStatusAcidente = atualizarStatusAcidente;
+window.editarAcidente = editarAcidente;
+window.deletarAcidente = deletarAcidente;
+window.filtrarAcidentes = filtrarAcidentes;
