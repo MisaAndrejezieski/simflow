@@ -115,4 +115,59 @@ document.addEventListener('DOMContentLoaded', function() {
                 data: document.getElementById('ga-data').value,
                 pauta: document.getElementById('ga-pauta').value,
                 participantes: document.getElementById('ga-participantes').value,
-                decisoes: document.getElementById('ga-de
+                decisoes: document.getElementById('ga-decisoes').value,
+                acoes_geradas: parseInt(document.getElementById('ga-acoes').value) || 0
+            };
+            
+            // Formatar data para exibição
+            const dataFormatada = new Date(dados.data + 'T00:00:00').toLocaleDateString('pt-BR');
+            
+            if (id) {
+                const index = gaData.findIndex(r => r.id === parseInt(id));
+                if (index !== -1) {
+                    gaData[index] = { ...gaData[index], ...dados, data: dataFormatada };
+                }
+            } else {
+                gaData.push({
+                    id: gaIdCounter++,
+                    ...dados,
+                    data: dataFormatada
+                });
+            }
+            
+            fecharModal('modal-ga');
+            carregarPagina(paginaAtual);
+        });
+    }
+});
+
+// ================================================================
+// EDITAR GA
+// ================================================================
+
+function editarGA(id) {
+    const reuniao = gaData.find(r => r.id === id);
+    if (reuniao) {
+        // Converter data de volta para formato YYYY-MM-DD
+        const partes = reuniao.data.split('/');
+        const dataISO = `${partes[2]}-${partes[1]}-${partes[0]}`;
+        abrirModalGAReal({ ...reuniao, data: dataISO });
+    }
+}
+
+// ================================================================
+// DELETAR GA
+// ================================================================
+
+function deletarGA(id) {
+    if (confirm('Deseja realmente excluir esta reunião?')) {
+        gaData = gaData.filter(r => r.id !== id);
+        carregarPagina(paginaAtual);
+    }
+}
+
+// Sobrescrever funções globais
+window.carregarListaGA = carregarListaGA;
+window.abrirModalGAReal = abrirModalGAReal;
+window.editarGA = editarGA;
+window.deletarGA = deletarGA;
