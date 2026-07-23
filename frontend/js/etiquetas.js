@@ -2,31 +2,30 @@
 // ETIQUETAS.JS - MÓDULO DE ETIQUETAS
 // ================================================================
 
-// ================================================================
-// DADOS EM MEMÓRIA (SIMULANDO BANCO)
-// ================================================================
-
+// DADOS EM MEMÓRIA
 let etiquetasData = [];
 let etiquetaIdCounter = 1;
+
+console.log('🏷️ Módulo Etiquetas carregado!');
 
 // ================================================================
 // CARREGAR DASHBOARD
 // ================================================================
 
 function carregarDashboardReal() {
+    console.log('📊 carregarDashboardReal chamado');
     const content = document.getElementById('page-content');
     
-    // Buscar dados
     const abertas = etiquetasData.filter(e => e.status !== 'Concluída');
     const vermelhas = etiquetasData.filter(e => e.tipo === 'Vermelha' && e.status !== 'Concluída');
     const azuis = etiquetasData.filter(e => e.tipo === 'Azul' && e.status !== 'Concluída');
     const total = etiquetasData.length;
     
     // Atualizar badge
-    document.getElementById('badge-etiquetas').textContent = abertas.length;
+    const badge = document.getElementById('badge-etiquetas');
+    if (badge) badge.textContent = abertas.length;
     
     let html = `
-        <!-- Cards -->
         <div class="dashboard-cards">
             <div class="card card-purple">
                 <div class="card-icon">📋</div>
@@ -50,7 +49,6 @@ function carregarDashboardReal() {
             </div>
         </div>
         
-        <!-- Últimas Etiquetas -->
         <div class="table-container">
             <div class="table-header">
                 <h3>📋 Últimas Etiquetas</h3>
@@ -104,6 +102,7 @@ function carregarDashboardReal() {
     `;
     
     content.innerHTML = html;
+    console.log('✅ Dashboard atualizado com', total, 'etiquetas');
 }
 
 // ================================================================
@@ -111,6 +110,7 @@ function carregarDashboardReal() {
 // ================================================================
 
 function carregarListaEtiquetas() {
+    console.log('🏷️ carregarListaEtiquetas chamado');
     const content = document.getElementById('page-content');
     
     let html = `
@@ -174,10 +174,10 @@ function carregarListaEtiquetas() {
                     <td>
                         <div style="display: flex; gap: 4px; flex-wrap: wrap;">
                             ${e.status !== 'Concluída' ? `
-                                <button class="btn btn-sm btn-primary" onclick="atualizarStatusEtiqueta(${e.id}, 'Em Análise')">Analisar</button>
-                                <button class="btn btn-sm btn-success" onclick="atualizarStatusEtiqueta(${e.id}, 'Concluída')">Concluir</button>
+                                <button class="btn btn-sm btn-primary" onclick="window.atualizarStatusEtiqueta(${e.id}, 'Em Análise')">Analisar</button>
+                                <button class="btn btn-sm btn-success" onclick="window.atualizarStatusEtiqueta(${e.id}, 'Concluída')">Concluir</button>
                             ` : ''}
-                            <button class="btn btn-sm btn-danger" onclick="deletarEtiqueta(${e.id})">🗑️</button>
+                            <button class="btn btn-sm btn-danger" onclick="window.deletarEtiqueta(${e.id})">🗑️</button>
                         </div>
                     </td>
                 </tr>
@@ -193,6 +193,7 @@ function carregarListaEtiquetas() {
     `;
     
     content.innerHTML = html;
+    console.log('✅ Lista de etiquetas atualizada com', etiquetasData.length, 'itens');
 }
 
 // ================================================================
@@ -200,17 +201,23 @@ function carregarListaEtiquetas() {
 // ================================================================
 
 function abrirModalEtiquetaReal(dados = null) {
+    console.log('📝 abrirModalEtiquetaReal chamado', dados);
     const modal = document.getElementById('modal-etiqueta');
     const form = document.getElementById('form-etiqueta');
+    
+    if (!modal || !form) {
+        console.error('❌ Modal ou formulário não encontrado');
+        return;
+    }
     
     form.reset();
     document.getElementById('etiqueta-id').value = '';
     
     if (dados) {
         document.getElementById('etiqueta-id').value = dados.id;
-        document.getElementById('etiqueta-titulo').value = dados.titulo;
-        document.getElementById('etiqueta-descricao').value = dados.descricao;
-        document.getElementById('etiqueta-tipo').value = dados.tipo;
+        document.getElementById('etiqueta-titulo').value = dados.titulo || '';
+        document.getElementById('etiqueta-descricao').value = dados.descricao || '';
+        document.getElementById('etiqueta-tipo').value = dados.tipo || '';
         document.getElementById('etiqueta-linha').value = dados.linha || '';
         document.getElementById('etiqueta-responsavel').value = dados.responsavel || '';
         document.getElementById('etiqueta-via').value = dados.via || '';
@@ -219,6 +226,7 @@ function abrirModalEtiquetaReal(dados = null) {
     
     modal.style.display = 'flex';
     document.body.style.overflow = 'hidden';
+    console.log('✅ Modal Etiqueta aberto');
 }
 
 // ================================================================
@@ -230,8 +238,11 @@ document.addEventListener('DOMContentLoaded', function() {
     if (form) {
         form.addEventListener('submit', function(e) {
             e.preventDefault();
+            console.log('📝 Formulário de etiqueta submetido');
             
             const id = document.getElementById('etiqueta-id').value;
+            const hoje = new Date().toLocaleDateString('pt-BR');
+            
             const dados = {
                 titulo: document.getElementById('etiqueta-titulo').value,
                 descricao: document.getElementById('etiqueta-descricao').value,
@@ -242,22 +253,24 @@ document.addEventListener('DOMContentLoaded', function() {
                 observacoes: document.getElementById('etiqueta-observacoes').value
             };
             
+            console.log('📝 Dados da etiqueta:', dados);
+            
             if (id) {
-                // Editar
                 const index = etiquetasData.findIndex(e => e.id === parseInt(id));
                 if (index !== -1) {
                     etiquetasData[index] = { ...etiquetasData[index], ...dados };
+                    console.log('✅ Etiqueta atualizada:', id);
                 }
             } else {
-                // Criar
-                const hoje = new Date().toLocaleDateString('pt-BR');
-                etiquetasData.push({
+                const novaEtiqueta = {
                     id: etiquetaIdCounter++,
                     ...dados,
                     status: 'Aberta',
                     data_abertura: hoje,
                     data_fechamento: null
-                });
+                };
+                etiquetasData.push(novaEtiqueta);
+                console.log('✅ Nova etiqueta criada:', novaEtiqueta);
             }
             
             fecharModal('modal-etiqueta');
@@ -271,13 +284,17 @@ document.addEventListener('DOMContentLoaded', function() {
 // ================================================================
 
 function atualizarStatusEtiqueta(id, novoStatus) {
+    console.log('📝 Atualizando status da etiqueta', id, 'para', novoStatus);
     const etiqueta = etiquetasData.find(e => e.id === id);
     if (etiqueta) {
         etiqueta.status = novoStatus;
         if (novoStatus === 'Concluída') {
             etiqueta.data_fechamento = new Date().toLocaleDateString('pt-BR');
         }
+        console.log('✅ Status atualizado:', etiqueta);
         carregarPagina(paginaAtual);
+    } else {
+        console.error('❌ Etiqueta não encontrada:', id);
     }
 }
 
@@ -286,9 +303,14 @@ function atualizarStatusEtiqueta(id, novoStatus) {
 // ================================================================
 
 function deletarEtiqueta(id) {
+    console.log('🗑️ Deletando etiqueta', id);
     if (confirm('Deseja realmente excluir esta etiqueta?')) {
-        etiquetasData = etiquetasData.filter(e => e.id !== id);
-        carregarPagina(paginaAtual);
+        const index = etiquetasData.findIndex(e => e.id === id);
+        if (index !== -1) {
+            etiquetasData.splice(index, 1);
+            console.log('✅ Etiqueta deletada:', id);
+            carregarPagina(paginaAtual);
+        }
     }
 }
 
@@ -297,28 +319,28 @@ function deletarEtiqueta(id) {
 // ================================================================
 
 function filtrarEtiquetas() {
+    console.log('🔍 Filtrando etiquetas');
     const tipo = document.getElementById('filtro-tipo').value;
     const status = document.getElementById('filtro-status').value;
     
     const rows = document.querySelectorAll('#tabela-etiquetas-body tr');
     rows.forEach(row => {
-        if (row.cells.length === 1) return; // Pular linha de "sem dados"
-        
+        if (row.cells.length === 1) return;
         const rowTipo = row.dataset.tipo || '';
         const rowStatus = row.dataset.status || '';
-        
         let mostrar = true;
         if (tipo && rowTipo !== tipo) mostrar = false;
         if (status && rowStatus !== status) mostrar = false;
-        
         row.style.display = mostrar ? '' : 'none';
     });
 }
 
-// Sobrescrever funções globais
+// EXPORTA FUNÇÕES PARA O ESCOPO GLOBAL
 window.carregarDashboardReal = carregarDashboardReal;
 window.carregarListaEtiquetas = carregarListaEtiquetas;
 window.abrirModalEtiquetaReal = abrirModalEtiquetaReal;
 window.atualizarStatusEtiqueta = atualizarStatusEtiqueta;
 window.deletarEtiqueta = deletarEtiqueta;
 window.filtrarEtiquetas = filtrarEtiquetas;
+
+console.log('✅ Etiquetas.js carregado e funções exportadas!');
