@@ -10,25 +10,53 @@
     <div class="container">
         <!-- Sidebar -->
         <nav class="sidebar">
-            <h1>🏭 SIMFlow</h1>
-            <ul>
-                <li class="active" data-page="dashboard">📊 Dashboard</li>
-                <li data-page="etiquetas">🏷️ Etiquetas</li>
-                <li data-page="ga">👥 GA</li>
-                <li data-page="melhorias">📈 Ver & Agir</li>
-                <li data-page="acidentes">⚠️ Quase Acidentes</li>
-            </ul>
+            <div class="sidebar-header">
+                <h1>🏭 SIMFlow</h1>
+                <small>Gestão de Melhorias</small>
+            </div>
+            <div class="sidebar-nav">
+                <ul>
+                    <li class="active" data-page="dashboard">
+                        <span class="icon">📊</span> Dashboard
+                    </li>
+                    <li data-page="etiquetas">
+                        <span class="icon">🏷️</span> Etiquetas
+                        <span class="badge-sidebar" id="badge-etiquetas">0</span>
+                    </li>
+                    <li data-page="ga">
+                        <span class="icon">👥</span> GA
+                    </li>
+                    <li data-page="melhorias">
+                        <span class="icon">📈</span> Ver & Agir
+                    </li>
+                    <li data-page="acidentes">
+                        <span class="icon">⚠️</span> Quase Acidentes
+                    </li>
+                </ul>
+            </div>
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="avatar">👤</div>
+                    <div>
+                        <div class="user-name">Operador</div>
+                        <div class="user-role">Turno da Noite</div>
+                    </div>
+                </div>
+            </div>
         </nav>
         
         <!-- Conteúdo Principal -->
         <main class="content">
-            <header>
-                <h2 id="page-title">Dashboard</h2>
-                <button id="btn-novo" class="btn-primary">+ Novo</button>
-            </header>
+            <div class="content-header">
+                <h2 id="page-title">📊 Dashboard</h2>
+                <div class="header-actions">
+                    <button id="btn-novo" class="btn btn-primary">+ Novo</button>
+                </div>
+            </div>
             
             <section id="page-content">
-                <!-- Conteúdo dinâmico -->
+                <!-- Conteúdo dinâmico carregado via JavaScript -->
+                <div class="loading">Carregando...</div>
             </section>
         </main>
     </div>
@@ -36,67 +64,134 @@
     <!-- ============================================ -->
     <!-- MODAL - ETIQUETA -->
     <!-- ============================================ -->
-    <div id="modal" class="modal">
+    <div id="modal-etiqueta" class="modal">
         <div class="modal-content">
-            <span class="close" onclick="fecharModal()">&times;</span>
-            <h2>Nova Etiqueta</h2>
+            <button class="modal-close" onclick="fecharModal('modal-etiqueta')">&times;</button>
+            <h2>📝 Nova Etiqueta</h2>
             <form id="form-etiqueta">
-                <input type="text" id="etiqueta-titulo" placeholder="Título" required>
-                <textarea id="etiqueta-descricao" placeholder="Descrição" required></textarea>
-                <select id="etiqueta-tipo" required>
-                    <option value="">Tipo</option>
-                    <option value="Azul">Azul - Operador resolve</option>
-                    <option value="Vermelha">Vermelha - Manutenção</option>
-                </select>
-                <select id="etiqueta-linha">
-                    <option value="TREPKO">TREPKO</option>
-                    <option value="SERAC">SERAC</option>
-                </select>
-                <input type="text" id="etiqueta-responsavel" placeholder="Responsável">
-                <input type="text" id="etiqueta-via" placeholder="Via (Controle/Manutenção)">
-                <textarea id="etiqueta-observacoes" placeholder="Observações"></textarea>
-                <button type="submit" class="btn-primary">Salvar</button>
+                <input type="hidden" id="etiqueta-id">
+                <div>
+                    <label>Título</label>
+                    <input type="text" id="etiqueta-titulo" placeholder="Digite o título" required>
+                </div>
+                <div>
+                    <label>Descrição</label>
+                    <textarea id="etiqueta-descricao" placeholder="Descreva o problema ou melhoria" required></textarea>
+                </div>
+                <div class="form-row">
+                    <div>
+                        <label>Tipo</label>
+                        <select id="etiqueta-tipo" required>
+                            <option value="">Selecione...</option>
+                            <option value="Azul">🔵 Azul - Operador resolve</option>
+                            <option value="Vermelha">🔴 Vermelha - Manutenção</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Linha</label>
+                        <select id="etiqueta-linha">
+                            <option value="TREPKO">TREPKO</option>
+                            <option value="SERAC">SERAC</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div>
+                        <label>Responsável</label>
+                        <input type="text" id="etiqueta-responsavel" placeholder="Nome do responsável">
+                    </div>
+                    <div>
+                        <label>Via</label>
+                        <input type="text" id="etiqueta-via" placeholder="Controle / Manutenção">
+                    </div>
+                </div>
+                <div>
+                    <label>Observações</label>
+                    <textarea id="etiqueta-observacoes" placeholder="Observações adicionais" rows="2"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="fecharModal('modal-etiqueta')">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">💾 Salvar</button>
+                </div>
             </form>
         </div>
     </div>
     
     <!-- ============================================ -->
-    <!-- MODAL - GA (Grupo Autônomo) -->
+    <!-- MODAL - GA -->
     <!-- ============================================ -->
     <div id="modal-ga" class="modal">
         <div class="modal-content">
-            <span class="close" onclick="fecharModalGA()">&times;</span>
-            <h2>Nova Reunião GA</h2>
+            <button class="modal-close" onclick="fecharModal('modal-ga')">&times;</button>
+            <h2>👥 Nova Reunião GA</h2>
             <form id="form-ga">
                 <input type="hidden" id="ga-id">
-                <input type="date" id="ga-data" required>
-                <input type="text" id="ga-pauta" placeholder="Pauta da Reunião" required>
-                <input type="text" id="ga-participantes" placeholder="Participantes (separados por vírgula)">
-                <textarea id="ga-decisoes" placeholder="Decisões tomadas" rows="3"></textarea>
-                <input type="number" id="ga-acoes" placeholder="Número de ações geradas" min="0">
-                <button type="submit" class="btn-primary">Salvar</button>
+                <div>
+                    <label>Data da Reunião</label>
+                    <input type="date" id="ga-data" required>
+                </div>
+                <div>
+                    <label>Pauta</label>
+                    <input type="text" id="ga-pauta" placeholder="Assunto da reunião" required>
+                </div>
+                <div>
+                    <label>Participantes</label>
+                    <input type="text" id="ga-participantes" placeholder="Nomes separados por vírgula">
+                </div>
+                <div>
+                    <label>Decisões</label>
+                    <textarea id="ga-decisoes" placeholder="Decisões tomadas na reunião" rows="3"></textarea>
+                </div>
+                <div>
+                    <label>Ações Geradas</label>
+                    <input type="number" id="ga-acoes" placeholder="Quantas ações foram geradas" min="0" value="0">
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="fecharModal('modal-ga')">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">💾 Salvar</button>
+                </div>
             </form>
         </div>
     </div>
     
     <!-- ============================================ -->
-    <!-- MODAL - MELHORIA (Ver & Agir / LUP'S) -->
+    <!-- MODAL - MELHORIA -->
     <!-- ============================================ -->
     <div id="modal-melhoria" class="modal">
         <div class="modal-content">
-            <span class="close" onclick="fecharModalMelhoria()">&times;</span>
-            <h2>Nova Melhoria</h2>
+            <button class="modal-close" onclick="fecharModal('modal-melhoria')">&times;</button>
+            <h2>📈 Nova Melhoria</h2>
             <form id="form-melhoria">
                 <input type="hidden" id="melhoria-id">
-                <input type="text" id="melhoria-titulo" placeholder="Título" required>
-                <textarea id="melhoria-descricao" placeholder="Descrição" required rows="3"></textarea>
-                <select id="melhoria-categoria" required>
-                    <option value="Ver & Agir">Ver & Agir</option>
-                    <option value="LUP">LUP - Lição de Um Ponto</option>
-                </select>
-                <input type="text" id="melhoria-imagem-antes" placeholder="URL imagem ANTES (opcional)">
-                <input type="text" id="melhoria-imagem-depois" placeholder="URL imagem DEPOIS (opcional)">
-                <button type="submit" class="btn-primary">Salvar</button>
+                <div>
+                    <label>Título</label>
+                    <input type="text" id="melhoria-titulo" placeholder="Título da melhoria" required>
+                </div>
+                <div>
+                    <label>Descrição</label>
+                    <textarea id="melhoria-descricao" placeholder="Descreva a melhoria" rows="3" required></textarea>
+                </div>
+                <div>
+                    <label>Categoria</label>
+                    <select id="melhoria-categoria" required>
+                        <option value="Ver & Agir">📊 Ver & Agir</option>
+                        <option value="LUP">📖 LUP - Lição de Um Ponto</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <div>
+                        <label>Imagem ANTES (URL)</label>
+                        <input type="text" id="melhoria-imagem-antes" placeholder="https://...">
+                    </div>
+                    <div>
+                        <label>Imagem DEPOIS (URL)</label>
+                        <input type="text" id="melhoria-imagem-depois" placeholder="https://...">
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="fecharModal('modal-melhoria')">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">💾 Salvar</button>
+                </div>
             </form>
         </div>
     </div>
@@ -106,19 +201,36 @@
     <!-- ============================================ -->
     <div id="modal-acidente" class="modal">
         <div class="modal-content">
-            <span class="close" onclick="fecharModalAcidente()">&times;</span>
-            <h2>Registrar Quase Acidente</h2>
+            <button class="modal-close" onclick="fecharModal('modal-acidente')">&times;</button>
+            <h2>⚠️ Registrar Quase Acidente</h2>
             <form id="form-acidente">
                 <input type="hidden" id="acidente-id">
-                <textarea id="acidente-descricao" placeholder="Descrição do ocorrido" required rows="3"></textarea>
-                <input type="text" id="acidente-local" placeholder="Local" required>
-                <input type="text" id="acidente-responsavel" placeholder="Responsável pelo registro" required>
-                <select id="acidente-status">
-                    <option value="Reportado">Reportado</option>
-                    <option value="Em Análise">Em Análise</option>
-                    <option value="Resolvido">Resolvido</option>
-                </select>
-                <button type="submit" class="btn-primary">Salvar</button>
+                <div>
+                    <label>Descrição do Ocorrido</label>
+                    <textarea id="acidente-descricao" placeholder="Descreva o que aconteceu" rows="3" required></textarea>
+                </div>
+                <div class="form-row">
+                    <div>
+                        <label>Local</label>
+                        <input type="text" id="acidente-local" placeholder="Onde ocorreu" required>
+                    </div>
+                    <div>
+                        <label>Responsável pelo Registro</label>
+                        <input type="text" id="acidente-responsavel" placeholder="Quem registrou" required>
+                    </div>
+                </div>
+                <div>
+                    <label>Status</label>
+                    <select id="acidente-status">
+                        <option value="Reportado">📢 Reportado</option>
+                        <option value="Em Análise">🔍 Em Análise</option>
+                        <option value="Resolvido">✅ Resolvido</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="fecharModal('modal-acidente')">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">💾 Salvar</button>
+                </div>
             </form>
         </div>
     </div>
