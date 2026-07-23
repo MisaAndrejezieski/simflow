@@ -1,0 +1,522 @@
+# ================================================================
+#                     .GITIGNORE SUPREMO
+#                   Para SIMFlow - Python/Flask
+# ================================================================
+
+# ================================================================
+# 1. PYTHON - Tudo que o Python gera automaticamente
+# ================================================================
+
+# Byte-compiled
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.pyd
+
+# Virtual environments
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+pythonenv*
+.venv
+.virtualenv
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+*.egg
+share/python-wheels/
+pip-wheel-metadata/
+*.whl
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
+*.pytest_cache
+test-results/
+*.pytest_cache
+
+# MyPy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+pytype-output/
+.ptype/
+
+# Pyre
+.pyre/
+
+# PyCharm
+.idea/
+*.iml
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# Profiling
+.prof
+*.prof
+
+# ================================================================
+# 2. DEPENDÊNCIAS E BIBLIOTECAS
+# ================================================================
+
+# Pipenv
+Pipfile.lock
+.venv
+
+# Poetry
+poetry.lock
+poetry.toml
+
+# Conda
+*.conda
+.conda
+conda-build
+
+# ================================================================
+# 3. BANCO DE DADOS
+# ================================================================
+
+# SQLite
+*.db
+*.sqlite
+*.sqlite3
+*.db-journal
+*.sqlite-journal
+*.sqlite-wal
+*.sqlite-shm
+
+# PostgreSQL local
+postgresql-data/
+*.pgsql
+pgdata/
+*.pgpass
+
+# MySQL local
+*.mysql
+*.mariadb
+
+# ================================================================
+# 4. VARIÁVEIS DE AMBIENTE E SEGREDOS
+# ================================================================
+
+.env
+.env.local
+.env.*.local
+.env.production
+.env.development
+.env.test
+*.env
+config.py
+secrets.py
+secret_key.py
+credentials.py
+auth.py
+.env.keys
+
+# API Keys
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+*.secret
+*.token
+
+# ================================================================
+# 5. LOGS E ARQUIVOS TEMPORÁRIOS
+# ================================================================
+
+*.log
+logs/
+*.pid
+*.seed
+*.pid.lock
+*.tmp
+*.temp
+temp/
+tmp/
+*.cache
+*.cache.db
+*.lock
+
+# ================================================================
+# 6. VISUAL STUDIO CODE
+# ================================================================
+
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+.history/
+*.localhistory
+.vscode-test/
+
+# ================================================================
+# 7. WINDOWS - Específicos do sistema
+# ================================================================
+
+# Thumbnails
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.thumb
+*.thm
+
+# Windows Installers
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.exe
+*.dll
+
+# Shortcuts
+*.lnk
+*.url
+
+# Temporary Windows files
+*.tmp
+*.TMP
+*.old
+*.bak
+*.backup
+~$*
+*.~*
+
+# Desktop.ini
+Desktop.ini
+$RECYCLE.BIN/
+
+# ================================================================
+# 8. BACKUP E ARQUIVOS DE SISTEMA
+# ================================================================
+
+*.bak
+*.backup
+*.old
+*.orig
+*.rej
+*~
+*.swp
+*.swo
+*.swn
+*.swm
+*.DS_Store
+.directory
+*.parts
+*.hmap
+*.xccheckout
+*.xcscmblueprint
+*.xcscheme
+*.xcuserstate
+
+# ================================================================
+# 9. FRONTEND - JavaScript/HTML/CSS
+# ================================================================
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Build outputs
+dist/
+build/
+out/
+*.min.js
+*.min.css
+coverage/
+
+# Bundlers
+webpack/
+parcel/
+rollup/
+vite/
+
+# ================================================================
+# 10. DEPLOYMENT E HOSPEDAGEM
+# ================================================================
+
+# Vercel
+.vercel/
+.vercel.json
+.vercelignore
+.vercel_cache/
+
+# Render
+.render/
+render.yaml
+render.yml
+
+# Netlify
+.netlify/
+netlify.toml
+
+# Heroku
+.heroku/
+heroku.yml
+.herokuapp/
+
+# Docker
+.docker/
+docker-compose.override.yml
+Dockerfile.prod
+*.dockerignore
+
+# ================================================================
+# 11. EDITORES DE TEXTO E IDEs
+# ================================================================
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+*.sublime-settings
+
+# Atom
+.atom/
+*.atom
+
+# Vim
+*.vim
+.vimrc
+
+# Emacs
+*.elc
+.emacs.d/
+
+# Eclipse
+.project
+.classpath
+.settings/
+*.launch
+
+# IntelliJ IDEA
+*.iml
+.idea/
+out/
+*.iws
+*.ipr
+
+# ================================================================
+# 12. ARQUIVOS DE PROJETO ESPECÍFICOS
+# ================================================================
+
+# SQLite database do projeto
+simflow.db
+simflow.db-journal
+simflow.db-wal
+simflow.db-shm
+instance/
+*.sqlite
+
+# Uploads e mídia
+uploads/
+media/
+static/uploads/
+static/media/
+assets/uploads/
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.svg
+*.ico
+*.mp4
+*.mp3
+*.wav
+
+# Relatórios gerados
+reports/
+*.pdf
+*.xlsx
+*.xls
+*.csv
+*.docx
+
+# Arquivos de configuração local
+*.local
+*.local.json
+*.local.yaml
+*.local.yml
+
+# ================================================================
+# 13. TESTES E COBERTURA
+# ================================================================
+
+.pytest_cache/
+.tox/
+.coverage
+htmlcov/
+cover/
+coverage.xml
+*.cover
+*.py,cover
+test-reports/
+junit.xml
+nosetests.xml
+*.test
+
+# ================================================================
+# 14. COMPILADOS E BINÁRIOS
+# ================================================================
+
+*.class
+*.o
+*.so
+*.dylib
+*.dll
+*.exe
+*.jar
+*.war
+*.ear
+*.par
+
+# ================================================================
+# 15. ARQUIVOS DE SISTEMA OPERACIONAL
+# ================================================================
+
+# Linux
+.directory
+*.pid
+*.lock
+
+# MacOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# ================================================================
+# 16. FERRAMENTAS DE QUALIDADE DE CÓDIGO
+# ================================================================
+
+# Flake8
+.flake8
+.tox
+
+# Black
+.black
+.black.toml
+
+# Isort
+.isort.cfg
+.isort
+
+# Pylint
+.pylintrc
+*.pylint
+
+# Mypy
+.mypy_cache/
+
+# ================================================================
+# 17. ARQUIVOS GRANDES E DESNECESSÁRIOS
+# ================================================================
+
+*.iso
+*.dmg
+*.pkg
+*.deb
+*.rpm
+*.tar.gz
+*.zip
+*.rar
+*.7z
+*.pkl
+*.pickle
+*.h5
+*.pt
+*.pth
+*.pytorch
+*.parquet
+
+# ================================================================
+# 18. DOCKER
+# ================================================================
+
+.docker/
+docker-compose.override.yml
+Dockerfile.prod
+*.dockerignore
+
+# ================================================================
+# 19. GIT E VERSIONAMENTO
+# ================================================================
+
+.git/
+.gitattributes
+.gitmodules
+.gitkeep
+*.orig
+*.rej
+*.patch
+
+# ================================================================
+# 20. EXTRAS - Segurança e Privacidade
+# ================================================================
+
+# Arquivos com dados pessoais
+*.keychain
+*.identity
+*.cert
+*.p12
+*.pfx
+*.jks
+*.keystore
+*.truststore
+
+# Arquivos sensíveis
+*.sql
+*.dump
+backup-*.sql
+pg_dump-*.sql
+*.backup
+
+# Arquivos de configuração de banco
+*.pgpass
+*.my.cnf
+*.my.ini
+*.mysql
