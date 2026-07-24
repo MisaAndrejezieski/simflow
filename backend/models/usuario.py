@@ -1,5 +1,7 @@
-from database.conexao import db
 from datetime import datetime
+
+from database.conexao import db
+
 
 class Usuario(db.Model):
     __tablename__ = 'usuarios'
@@ -12,6 +14,14 @@ class Usuario(db.Model):
     setor = db.Column(db.String(50))
     ativo = db.Column(db.Boolean, default=True)
     criado_em = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __init__(self, nome, usuario, senha, perfil, setor=None, ativo=True):
+        self.nome = nome
+        self.usuario = usuario
+        self.senha = senha
+        self.perfil = perfil
+        self.setor = setor
+        self.ativo = ativo
     
     def to_json(self):
         return {

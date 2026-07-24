@@ -16,6 +16,7 @@ const API_URL = 'http://localhost:5000/api';
 async function apiRequest(endpoint, method = 'GET', data = null) {
     const options = {
         method: method,
+        credentials: 'include',
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json'

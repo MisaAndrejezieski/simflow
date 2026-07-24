@@ -478,6 +478,7 @@
             try {
                 const response = await fetch(API_URL + '/auth/login', {
                     method: 'POST',
+                    credentials: 'include',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ usuario, senha })
                 });
@@ -516,7 +517,7 @@
         // ================================================================
         async function fazerLogout() {
             try {
-                await fetch(API_URL + '/auth/logout', { method: 'POST' });
+                await fetch(API_URL + '/auth/logout', { method: 'POST', credentials: 'include' });
             } catch (error) {
                 console.warn('Erro no logout:', error);
             }
