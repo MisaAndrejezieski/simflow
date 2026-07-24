@@ -3,592 +3,1821 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SIMFlow</title>
+    <title>SIMFlow - Gestão de Melhorias</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
-        body { display: flex; height: 100vh; background: #0F0E17; color: #fff; }
+        /* ================================================================
+           ESTILOS COMPLETOS - SIMFLOW
+           ================================================================ */
         
-        .sidebar { width: 200px; background: #1A1932; padding: 20px; border-right: 1px solid #333; }
-        .sidebar h1 { font-size: 20px; margin-bottom: 30px; color: #6C63FF; }
-        .sidebar ul { list-style: none; }
-        .sidebar ul li { padding: 12px 16px; cursor: pointer; border-radius: 8px; margin-bottom: 4px; }
-        .sidebar ul li:hover { background: #2A2A4A; }
-        .sidebar ul li.active { background: #6C63FF; }
-        .sidebar ul li .badge { float: right; background: #FF6B6B; padding: 2px 10px; border-radius: 12px; font-size: 12px; }
-        
-        .content { flex: 1; padding: 30px; overflow-y: auto; }
-        .content-header { display: flex; justify-content: space-between; margin-bottom: 20px; }
-        .btn { padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
-        .btn-primary { background: #6C63FF; color: #fff; }
-        .btn-primary:hover { background: #5A52D5; }
-        .btn-sm { padding: 5px 12px; font-size: 12px; border-radius: 4px; }
-        .btn-danger { background: #FF6B6B; color: #fff; }
-        .btn-success { background: #00C9A7; color: #fff; }
-        
-        .cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 30px; }
-        .card { background: #1A1932; padding: 20px; border-radius: 12px; border: 1px solid #333; }
-        .card .value { font-size: 32px; font-weight: bold; color: #6C63FF; }
-        .card .label { color: #888; font-size: 14px; }
-        
-        table { width: 100%; border-collapse: collapse; background: #1A1932; border-radius: 12px; overflow: hidden; }
-        th { background: #2A2A4A; padding: 12px; text-align: left; font-size: 12px; text-transform: uppercase; }
-        td { padding: 12px; border-bottom: 1px solid #333; }
-        .badge-azul { background: #4ECDC4; padding: 2px 12px; border-radius: 12px; font-size: 12px; }
-        .badge-vermelha { background: #FF6B6B; padding: 2px 12px; border-radius: 12px; font-size: 12px; }
-        .status-aberta { background: #FFB800; padding: 2px 12px; border-radius: 12px; font-size: 12px; color: #000; }
-        .status-concluida { background: #00C9A7; padding: 2px 12px; border-radius: 12px; font-size: 12px; }
-        
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); justify-content: center; align-items: center; }
-        .modal-content { background: #1A1932; padding: 30px; border-radius: 12px; width: 500px; max-width: 90%; max-height: 90vh; overflow-y: auto; }
-        .modal-close { float: right; background: none; border: none; color: #fff; font-size: 24px; cursor: pointer; }
-        .modal-content h2 { margin-bottom: 20px; }
-        .modal-content label { display: block; margin: 10px 0 5px; font-size: 14px; }
-        .modal-content input, .modal-content select, .modal-content textarea { 
-            width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #444; 
-            background: #2A2A4A; color: #fff; font-size: 14px;
+        /* Reset e Base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        .modal-content textarea { min-height: 80px; resize: vertical; }
-        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-        .form-actions { display: flex; gap: 12px; margin-top: 20px; justify-content: flex-end; }
-        
-        .grid-melhorias { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
-        .card-melhoria { background: #1A1932; padding: 20px; border-radius: 12px; border: 1px solid #333; }
-        .card-melhoria h4 { margin-bottom: 8px; }
-        .card-melhoria .desc { color: #888; font-size: 14px; }
-        .card-melhoria .footer { display: flex; justify-content: space-between; margin-top: 12px; padding-top: 12px; border-top: 1px solid #333; }
-        
-        .empty { text-align: center; padding: 60px; color: #888; }
-        
+
+        body {
+            display: flex;
+            height: 100vh;
+            background: #0F0E17;
+            color: #FFFFFF;
+            overflow: hidden;
+        }
+
+        /* ================================================================
+           SIDEBAR
+           ================================================================ */
+        .sidebar {
+            width: 220px;
+            background: #1A1932;
+            padding: 20px 16px;
+            border-right: 1px solid rgba(255, 255, 255, 0.06);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .sidebar h1 {
+            font-size: 22px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #6C63FF 0%, #3F3D9E 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .sidebar ul {
+            list-style: none;
+            flex: 1;
+        }
+
+        .sidebar ul li {
+            padding: 12px 16px;
+            cursor: pointer;
+            border-radius: 10px;
+            margin-bottom: 4px;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #A7A9BE;
+            font-weight: 500;
+        }
+
+        .sidebar ul li:hover {
+            background: rgba(108, 99, 255, 0.1);
+            color: #FFFFFF;
+            transform: translateX(4px);
+        }
+
+        .sidebar ul li.active {
+            background: rgba(108, 99, 255, 0.15);
+            color: #FFFFFF;
+            border-left: 3px solid #6C63FF;
+        }
+
+        .sidebar ul li .badge {
+            background: #FF6B6B;
+            color: #FFFFFF;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .sidebar-footer {
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .sidebar-footer .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6C63FF, #3F3D9E);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .sidebar-footer .user-info .name {
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .sidebar-footer .user-info .role {
+            font-size: 11px;
+            color: #6E6F8B;
+        }
+
+        /* ================================================================
+           CONTEÚDO PRINCIPAL
+           ================================================================ */
+        .content {
+            flex: 1;
+            padding: 30px 40px;
+            overflow-y: auto;
+            height: 100vh;
+        }
+
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .content-header h2 {
+            font-size: 26px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #6C63FF, #8B83FF);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .content-header .btn-novo {
+            background: linear-gradient(135deg, #6C63FF, #3F3D9E);
+            color: #FFFFFF;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 16px rgba(108, 99, 255, 0.3);
+        }
+
+        .content-header .btn-novo:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(108, 99, 255, 0.4);
+        }
+
+        .content-header .btn-novo.hidden {
+            display: none;
+        }
+
+        /* ================================================================
+           CARDS DO DASHBOARD
+           ================================================================ */
+        .dashboard-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: #1A1932;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            border-color: #6C63FF;
+            box-shadow: 0 8px 32px rgba(108, 99, 255, 0.1);
+        }
+
+        .card .icon {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .card .value {
+            font-size: 32px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #6C63FF, #8B83FF);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .card .label {
+            color: #A7A9BE;
+            font-size: 13px;
+            margin-top: 4px;
+        }
+
+        .card .sub {
+            color: #6E6F8B;
+            font-size: 12px;
+            margin-top: 4px;
+        }
+
+        /* ================================================================
+           TABELAS
+           ================================================================ */
+        .table-container {
+            background: #1A1932;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            overflow: hidden;
+        }
+
+        .table-container .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .table-container .table-header h3 {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .table-container .table-header .filtros {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .table-container .table-header .filtros select {
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: #0F0E17;
+            color: #FFFFFF;
+            font-size: 13px;
+            cursor: pointer;
+            outline: none;
+        }
+
+        .table-container .table-header .filtros select:focus {
+            border-color: #6C63FF;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        thead {
+            background: #0F0E17;
+        }
+
+        thead th {
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+            color: #A7A9BE;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            transition: all 0.2s ease;
+        }
+
+        tbody tr:hover {
+            background: rgba(108, 99, 255, 0.05);
+        }
+
+        tbody td {
+            padding: 12px 16px;
+            vertical-align: middle;
+        }
+
+        /* ================================================================
+           BADGES E STATUS
+           ================================================================ */
+        .badge-azul {
+            background: rgba(78, 205, 196, 0.2);
+            color: #4ECDC4;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-vermelha {
+            background: rgba(255, 107, 107, 0.2);
+            color: #FF6B6B;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-aberta {
+            background: rgba(255, 184, 0, 0.2);
+            color: #FFB800;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-analise {
+            background: rgba(78, 205, 196, 0.2);
+            color: #4ECDC4;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-concluida {
+            background: rgba(0, 201, 167, 0.2);
+            color: #00C9A7;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-info {
+            background: rgba(108, 99, 255, 0.2);
+            color: #6C63FF;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background: rgba(0, 201, 167, 0.2);
+            color: #00C9A7;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        /* ================================================================
+           BOTÕES DE AÇÃO
+           ================================================================ */
+        .btn-sm {
+            padding: 4px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .btn-sm:hover {
+            transform: scale(1.05);
+        }
+
+        .btn-primary {
+            background: #6C63FF;
+            color: #FFFFFF;
+        }
+
+        .btn-primary:hover {
+            background: #5A52D5;
+        }
+
+        .btn-success {
+            background: #00C9A7;
+            color: #FFFFFF;
+        }
+
+        .btn-success:hover {
+            background: #00B392;
+        }
+
+        .btn-danger {
+            background: #FF6B6B;
+            color: #FFFFFF;
+        }
+
+        .btn-danger:hover {
+            background: #E55A5A;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #FFFFFF;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .acoes {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+        }
+
+        /* ================================================================
+           GRID DE MELHORIAS
+           ================================================================ */
+        .grid-melhorias {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+        }
+
+        .card-melhoria {
+            background: #1A1932;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            transition: all 0.3s ease;
+        }
+
+        .card-melhoria:hover {
+            transform: translateY(-4px);
+            border-color: #6C63FF;
+            box-shadow: 0 8px 32px rgba(108, 99, 255, 0.1);
+        }
+
+        .card-melhoria .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+
+        .card-melhoria .header h4 {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .card-melhoria .desc {
+            color: #A7A9BE;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .card-melhoria .footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .card-melhoria .footer small {
+            color: #6E6F8B;
+            font-size: 12px;
+        }
+
+        /* ================================================================
+           MODAIS
+           ================================================================ */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: #1A1932;
+            padding: 30px;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 520px;
+            max-height: 90vh;
+            overflow-y: auto;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            animation: modalIn 0.3s ease;
+        }
+
+        @keyframes modalIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .modal-content .close {
+            float: right;
+            background: none;
+            border: none;
+            color: #A7A9BE;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            line-height: 1;
+        }
+
+        .modal-content .close:hover {
+            color: #FFFFFF;
+            transform: rotate(90deg);
+        }
+
+        .modal-content h2 {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #6C63FF, #8B83FF);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .modal-content label {
+            display: block;
+            margin: 12px 0 4px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #A7A9BE;
+        }
+
+        .modal-content input,
+        .modal-content select,
+        .modal-content textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: #0F0E17;
+            color: #FFFFFF;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .modal-content input:focus,
+        .modal-content select:focus,
+        .modal-content textarea:focus {
+            border-color: #6C63FF;
+            box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.2);
+        }
+
+        .modal-content textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .modal-content .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .modal-content .form-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+            justify-content: flex-end;
+        }
+
+        .modal-content .form-actions button {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .modal-content .form-actions .btn-cancelar {
+            background: rgba(255, 255, 255, 0.1);
+            color: #FFFFFF;
+        }
+
+        .modal-content .form-actions .btn-cancelar:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .modal-content .form-actions .btn-salvar {
+            background: linear-gradient(135deg, #6C63FF, #3F3D9E);
+            color: #FFFFFF;
+            box-shadow: 0 4px 16px rgba(108, 99, 255, 0.3);
+        }
+
+        .modal-content .form-actions .btn-salvar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(108, 99, 255, 0.4);
+        }
+
+        /* ================================================================
+           ESTADOS VAZIOS
+           ================================================================ */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6E6F8B;
+        }
+
+        .empty-state .icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .empty-state h3 {
+            font-size: 18px;
+            color: #A7A9BE;
+            margin-bottom: 8px;
+        }
+
+        .empty-state p {
+            font-size: 14px;
+        }
+
+        /* ================================================================
+           LOADING
+           ================================================================ */
+        .loading {
+            text-align: center;
+            padding: 60px;
+            color: #6E6F8B;
+        }
+
+        .loading .spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(108, 99, 255, 0.1);
+            border-top-color: #6C63FF;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ================================================================
+           RESPONSIVIDADE
+           ================================================================ */
+        @media (max-width: 1024px) {
+            .content {
+                padding: 20px;
+            }
+        }
+
         @media (max-width: 768px) {
-            body { flex-direction: column; }
-            .sidebar { width: 100%; padding: 10px; }
-            .sidebar ul { display: flex; overflow-x: auto; gap: 4px; }
-            .sidebar ul li { white-space: nowrap; padding: 8px 12px; font-size: 13px; }
-            .cards { grid-template-columns: 1fr 1fr; }
-            .form-row { grid-template-columns: 1fr; }
+            body {
+                flex-direction: column;
+                overflow: hidden;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+                padding: 12px 16px;
+                flex-direction: row;
+                border-right: none;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+                overflow-x: auto;
+            }
+
+            .sidebar h1 {
+                font-size: 18px;
+                margin-bottom: 0;
+                padding-bottom: 0;
+                border-bottom: none;
+                white-space: nowrap;
+            }
+
+            .sidebar ul {
+                display: flex;
+                gap: 4px;
+                flex: 1;
+                overflow-x: auto;
+            }
+
+            .sidebar ul li {
+                white-space: nowrap;
+                padding: 8px 14px;
+                font-size: 13px;
+            }
+
+            .sidebar ul li .badge {
+                display: none;
+            }
+
+            .sidebar-footer {
+                display: none;
+            }
+
+            .content {
+                padding: 16px;
+                height: calc(100vh - 60px);
+            }
+
+            .content-header h2 {
+                font-size: 20px;
+            }
+
+            .dashboard-cards {
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+            }
+
+            .card .value {
+                font-size: 24px;
+            }
+
+            .modal-content {
+                padding: 20px;
+                margin: 10px;
+            }
+
+            .modal-content .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .grid-melhorias {
+                grid-template-columns: 1fr;
+            }
+
+            .table-container .table-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .table-container .table-header .filtros {
+                flex-direction: column;
+            }
+
+            table {
+                font-size: 12px;
+                min-width: 600px;
+            }
+
+            thead th,
+            tbody td {
+                padding: 8px 12px;
+            }
+
+            .acoes {
+                flex-direction: column;
+                gap: 4px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .dashboard-cards {
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+            }
+
+            .card {
+                padding: 14px;
+            }
+
+            .card .value {
+                font-size: 20px;
+            }
+
+            .content-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .content-header .btn-novo {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        /* ================================================================
+           SCROLLBAR PERSONALIZADA
+           ================================================================ */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0F0E17;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #6C63FF;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #8B83FF;
         }
     </style>
 </head>
 <body>
 
-    <!-- SIDEBAR -->
+    <!-- ================================================================
+    SIDEBAR
+    ================================================================ -->
     <div class="sidebar">
         <h1>🏭 SIMFlow</h1>
         <ul>
-            <li class="active" onclick="pagina('dashboard')">📊 Dashboard</li>
-            <li onclick="pagina('etiquetas')">🏷️ Etiquetas <span class="badge" id="badge-etiquetas">0</span></li>
-            <li onclick="pagina('ga')">👥 GA</li>
-            <li onclick="pagina('melhorias')">📈 Ver & Agir</li>
-            <li onclick="pagina('acidentes')">⚠️ Quase Acidentes</li>
+            <li class="active" onclick="carregarPagina('dashboard')">
+                📊 Dashboard
+            </li>
+            <li onclick="carregarPagina('etiquetas')">
+                🏷️ Etiquetas
+                <span class="badge" id="badge-etiquetas">0</span>
+            </li>
+            <li onclick="carregarPagina('ga')">
+                👥 GA
+                <span class="badge" id="badge-ga">0</span>
+            </li>
+            <li onclick="carregarPagina('melhorias')">
+                📈 Ver & Agir
+                <span class="badge" id="badge-melhorias">0</span>
+            </li>
+            <li onclick="carregarPagina('acidentes')">
+                ⚠️ Quase Acidentes
+                <span class="badge" id="badge-acidentes">0</span>
+            </li>
         </ul>
+        <div class="sidebar-footer">
+            <div class="avatar">👤</div>
+            <div class="user-info">
+                <div class="name">Operador</div>
+                <div class="role">Turno da Noite</div>
+            </div>
+        </div>
     </div>
 
-    <!-- CONTEÚDO -->
+    <!-- ================================================================
+    CONTEÚDO PRINCIPAL
+    ================================================================ -->
     <div class="content">
         <div class="content-header">
-            <h2 id="titulo">📊 Dashboard</h2>
-            <button class="btn btn-primary" id="btnNovo" onclick="abrirModal()">+ Novo</button>
+            <h2 id="page-title">📊 Dashboard</h2>
+            <button class="btn-novo hidden" id="btn-novo" onclick="abrirModal()">+ Novo</button>
         </div>
-        <div id="conteudo"></div>
+        <div id="page-content">
+            <div class="loading">
+                <div class="spinner"></div>
+                <p style="margin-top:16px;">Carregando...</p>
+            </div>
+        </div>
     </div>
 
-    <!-- =================================================== -->
-    <!-- MODAL ETIQUETA -->
-    <!-- =================================================== -->
+    <!-- ================================================================
+    MODAL - ETIQUETA
+    ================================================================ -->
     <div class="modal" id="modal-etiqueta">
         <div class="modal-content">
-            <button class="modal-close" onclick="fecharModal('modal-etiqueta')">✕</button>
+            <button class="close" onclick="fecharModal('modal-etiqueta')">✕</button>
             <h2>📝 Nova Etiqueta</h2>
-            <form onsubmit="salvarEtiqueta(event)">
-                <input type="hidden" id="et-id">
+            <form id="form-etiqueta" onsubmit="salvarEtiqueta(event)">
+                <input type="hidden" id="etiqueta-id">
                 <label>Título</label>
-                <input type="text" id="et-titulo" required>
+                <input type="text" id="etiqueta-titulo" placeholder="Digite o título" required>
                 <label>Descrição</label>
-                <textarea id="et-descricao" required></textarea>
+                <textarea id="etiqueta-descricao" placeholder="Descreva o problema ou melhoria" required></textarea>
                 <div class="form-row">
                     <div>
                         <label>Tipo</label>
-                        <select id="et-tipo">
-                            <option value="Azul">🔵 Azul</option>
-                            <option value="Vermelha">🔴 Vermelha</option>
+                        <select id="etiqueta-tipo" required>
+                            <option value="Azul">🔵 Azul - Operador</option>
+                            <option value="Vermelha">🔴 Vermelha - Manutenção</option>
                         </select>
                     </div>
                     <div>
                         <label>Linha</label>
-                        <select id="et-linha">
+                        <select id="etiqueta-linha">
                             <option value="TREPKO">TREPKO</option>
                             <option value="SERAC">SERAC</option>
                         </select>
                     </div>
                 </div>
-                <label>Responsável</label>
-                <input type="text" id="et-responsavel">
+                <div class="form-row">
+                    <div>
+                        <label>Responsável</label>
+                        <input type="text" id="etiqueta-responsavel" placeholder="Nome do responsável">
+                    </div>
+                    <div>
+                        <label>Via</label>
+                        <input type="text" id="etiqueta-via" placeholder="Controle / Manutenção">
+                    </div>
+                </div>
+                <label>Observações</label>
+                <textarea id="etiqueta-observacoes" placeholder="Observações adicionais" rows="2"></textarea>
                 <div class="form-actions">
-                    <button type="button" class="btn" style="background:#444;" onclick="fecharModal('modal-etiqueta')">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">Salvar</button>
+                    <button type="button" class="btn-cancelar" onclick="fecharModal('modal-etiqueta')">Cancelar</button>
+                    <button type="submit" class="btn-salvar">💾 Salvar</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- =================================================== -->
-    <!-- MODAL GA -->
-    <!-- =================================================== -->
+    <!-- ================================================================
+    MODAL - GA
+    ================================================================ -->
     <div class="modal" id="modal-ga">
         <div class="modal-content">
-            <button class="modal-close" onclick="fecharModal('modal-ga')">✕</button>
+            <button class="close" onclick="fecharModal('modal-ga')">✕</button>
             <h2>👥 Nova Reunião GA</h2>
-            <form onsubmit="salvarGA(event)">
+            <form id="form-ga" onsubmit="salvarGA(event)">
                 <input type="hidden" id="ga-id">
                 <label>Data</label>
                 <input type="date" id="ga-data" required>
                 <label>Pauta</label>
-                <input type="text" id="ga-pauta" required>
+                <input type="text" id="ga-pauta" placeholder="Assunto da reunião" required>
                 <label>Participantes</label>
-                <input type="text" id="ga-participantes">
+                <input type="text" id="ga-participantes" placeholder="Nomes separados por vírgula">
                 <label>Decisões</label>
-                <textarea id="ga-decisoes"></textarea>
+                <textarea id="ga-decisoes" placeholder="Decisões tomadas" rows="3"></textarea>
                 <label>Ações Geradas</label>
-                <input type="number" id="ga-acoes" value="0">
+                <input type="number" id="ga-acoes" placeholder="Quantidade" min="0" value="0">
                 <div class="form-actions">
-                    <button type="button" class="btn" style="background:#444;" onclick="fecharModal('modal-ga')">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">Salvar</button>
+                    <button type="button" class="btn-cancelar" onclick="fecharModal('modal-ga')">Cancelar</button>
+                    <button type="submit" class="btn-salvar">💾 Salvar</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- =================================================== -->
-    <!-- MODAL MELHORIA -->
-    <!-- =================================================== -->
+    <!-- ================================================================
+    MODAL - MELHORIA
+    ================================================================ -->
     <div class="modal" id="modal-melhoria">
         <div class="modal-content">
-            <button class="modal-close" onclick="fecharModal('modal-melhoria')">✕</button>
+            <button class="close" onclick="fecharModal('modal-melhoria')">✕</button>
             <h2>📈 Nova Melhoria</h2>
-            <form onsubmit="salvarMelhoria(event)">
-                <input type="hidden" id="me-id">
+            <form id="form-melhoria" onsubmit="salvarMelhoria(event)">
+                <input type="hidden" id="melhoria-id">
                 <label>Título</label>
-                <input type="text" id="me-titulo" required>
+                <input type="text" id="melhoria-titulo" placeholder="Título da melhoria" required>
                 <label>Descrição</label>
-                <textarea id="me-descricao" required></textarea>
+                <textarea id="melhoria-descricao" placeholder="Descreva a melhoria" rows="3" required></textarea>
                 <label>Categoria</label>
-                <select id="me-categoria">
-                    <option value="Ver & Agir">Ver & Agir</option>
-                    <option value="LUP">LUP</option>
+                <select id="melhoria-categoria" required>
+                    <option value="Ver & Agir">📊 Ver & Agir</option>
+                    <option value="LUP">📖 LUP - Lição de Um Ponto</option>
                 </select>
                 <div class="form-actions">
-                    <button type="button" class="btn" style="background:#444;" onclick="fecharModal('modal-melhoria')">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">Salvar</button>
+                    <button type="button" class="btn-cancelar" onclick="fecharModal('modal-melhoria')">Cancelar</button>
+                    <button type="submit" class="btn-salvar">💾 Salvar</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- =================================================== -->
-    <!-- MODAL ACIDENTE -->
-    <!-- =================================================== -->
+    <!-- ================================================================
+    MODAL - QUASE ACIDENTE
+    ================================================================ -->
     <div class="modal" id="modal-acidente">
         <div class="modal-content">
-            <button class="modal-close" onclick="fecharModal('modal-acidente')">✕</button>
+            <button class="close" onclick="fecharModal('modal-acidente')">✕</button>
             <h2>⚠️ Registrar Quase Acidente</h2>
-            <form onsubmit="salvarAcidente(event)">
-                <input type="hidden" id="ac-id">
+            <form id="form-acidente" onsubmit="salvarAcidente(event)">
+                <input type="hidden" id="acidente-id">
                 <label>Descrição</label>
-                <textarea id="ac-descricao" required></textarea>
+                <textarea id="acidente-descricao" placeholder="Descreva o ocorrido" rows="3" required></textarea>
                 <div class="form-row">
                     <div>
                         <label>Local</label>
-                        <input type="text" id="ac-local" required>
+                        <input type="text" id="acidente-local" placeholder="Onde ocorreu" required>
                     </div>
                     <div>
                         <label>Responsável</label>
-                        <input type="text" id="ac-responsavel" required>
+                        <input type="text" id="acidente-responsavel" placeholder="Quem registrou" required>
                     </div>
                 </div>
                 <label>Status</label>
-                <select id="ac-status">
-                    <option value="Reportado">Reportado</option>
-                    <option value="Em Análise">Em Análise</option>
-                    <option value="Resolvido">Resolvido</option>
+                <select id="acidente-status">
+                    <option value="Reportado">📢 Reportado</option>
+                    <option value="Em Análise">🔍 Em Análise</option>
+                    <option value="Resolvido">✅ Resolvido</option>
                 </select>
                 <div class="form-actions">
-                    <button type="button" class="btn" style="background:#444;" onclick="fecharModal('modal-acidente')">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">Salvar</button>
+                    <button type="button" class="btn-cancelar" onclick="fecharModal('modal-acidente')">Cancelar</button>
+                    <button type="submit" class="btn-salvar">💾 Salvar</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- =================================================== -->
-    <!-- SCRIPT PRINCIPAL -->
-    <!-- =================================================== -->
+    <!-- ================================================================
+    SCRIPTS
+    ================================================================ -->
+    <script src="js/api.js"></script>
     <script>
+        // ================================================================
+        // SIMFLOW - SISTEMA COMPLETO INTEGRADO COM A API
+        // ================================================================
+
         console.log('🚀 SIMFlow iniciado!');
 
-        // ================================================
-        // DADOS
-        // ================================================
-        let etiquetas = [];
-        let etId = 1;
-        let gaLista = [];
-        let gaId = 1;
-        let melhoriasLista = [];
-        let meId = 1;
-        let acidentesLista = [];
-        let acId = 1;
+        // ================================================================
+        // VARIÁVEIS GLOBAIS
+        // ================================================================
         let paginaAtual = 'dashboard';
+        let dadosEtiquetas = [];
+        let dadosGA = [];
+        let dadosMelhorias = [];
+        let dadosAcidentes = [];
 
-        // ================================================
+        // ================================================================
+        // FUNÇÃO PARA TESTAR CONEXÃO COM O BACKEND
+        // ================================================================
+        async function testarBackend() {
+            try {
+                const conectado = await window.testarConexao();
+                if (!conectado) {
+                    console.warn('⚠️ Backend offline - usando dados em memória');
+                }
+                return conectado;
+            } catch (error) {
+                console.warn('⚠️ Backend offline - usando dados em memória');
+                return false;
+            }
+        }
+
+        // ================================================================
         // NAVEGAÇÃO
-        // ================================================
-        function pagina(pagina) {
-            console.log('📄 Navegando para:', pagina);
+        // ================================================================
+        function carregarPagina(pagina) {
+            console.log('📄 Carregando página:', pagina);
             paginaAtual = pagina;
 
-            // Menu
+            // Atualizar menu
             document.querySelectorAll('.sidebar ul li').forEach(el => el.classList.remove('active'));
             const items = document.querySelectorAll('.sidebar ul li');
-            const idx = ['dashboard','etiquetas','ga','melhorias','acidentes'].indexOf(pagina);
+            const idx = ['dashboard', 'etiquetas', 'ga', 'melhorias', 'acidentes'].indexOf(pagina);
             if (items[idx]) items[idx].classList.add('active');
 
-            // Título
+            // Atualizar título
             const titulos = {
                 'dashboard': '📊 Dashboard',
                 'etiquetas': '🏷️ Etiquetas',
-                'ga': '👥 GA',
-                'melhorias': '📈 Ver & Agir',
+                'ga': '👥 Grupo Autônomo (GA)',
+                'melhorias': '📈 Ver & Agir / LUP\'S',
                 'acidentes': '⚠️ Quase Acidentes'
             };
-            document.getElementById('titulo').textContent = titulos[pagina] || pagina;
+            document.getElementById('page-title').textContent = titulos[pagina] || pagina;
 
-            // Botão Novo
-            document.getElementById('btnNovo').style.display = (pagina === 'dashboard') ? 'none' : 'inline-block';
+            // Mostrar/esconder botão Novo
+            const btnNovo = document.getElementById('btn-novo');
+            if (pagina === 'dashboard') {
+                btnNovo.classList.add('hidden');
+            } else {
+                btnNovo.classList.remove('hidden');
+            }
 
-            // Conteúdo
-            switch(pagina) {
-                case 'dashboard': renderDashboard(); break;
-                case 'etiquetas': renderEtiquetas(); break;
-                case 'ga': renderGA(); break;
-                case 'melhorias': renderMelhorias(); break;
-                case 'acidentes': renderAcidentes(); break;
+            // Carregar conteúdo
+            switch (pagina) {
+                case 'dashboard':
+                    carregarDashboard();
+                    break;
+                case 'etiquetas':
+                    carregarEtiquetas();
+                    break;
+                case 'ga':
+                    carregarGA();
+                    break;
+                case 'melhorias':
+                    carregarMelhorias();
+                    break;
+                case 'acidentes':
+                    carregarAcidentes();
+                    break;
             }
         }
 
-        // ================================================
-        // DASHBOARD
-        // ================================================
-        function renderDashboard() {
-            const total = etiquetas.length;
-            const abertas = etiquetas.filter(e => e.status !== 'Concluída').length;
-            const vermelhas = etiquetas.filter(e => e.tipo === 'Vermelha' && e.status !== 'Concluída').length;
-            const azuis = etiquetas.filter(e => e.tipo === 'Azul' && e.status !== 'Concluída').length;
-
-            document.getElementById('badge-etiquetas').textContent = abertas;
-
-            let html = `
-                <div class="cards">
-                    <div class="card"><div class="value">${total}</div><div class="label">Total Etiquetas</div></div>
-                    <div class="card"><div class="value">${abertas}</div><div class="label">Em Aberto</div></div>
-                    <div class="card"><div class="value">${vermelhas}</div><div class="label">Vermelhas</div></div>
-                    <div class="card"><div class="value">${azuis}</div><div class="label">Azuis</div></div>
+        // ================================================================
+        // FUNÇÃO DE LOADING
+        // ================================================================
+        function mostrarLoading() {
+            document.getElementById('page-content').innerHTML = `
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p style="margin-top:16px;">Carregando...</p>
                 </div>
-                <h3 style="margin-bottom:12px;">📋 Últimas Etiquetas</h3>
-                <table>
-                    <thead><tr><th>ID</th><th>Título</th><th>Tipo</th><th>Status</th></tr></thead>
-                    <tbody>
             `;
-
-            const ultimas = [...etiquetas].reverse().slice(0,5);
-            if (ultimas.length === 0) {
-                html += `<tr><td colspan="4" style="text-align:center;color:#888;padding:30px;">Nenhuma etiqueta</td></tr>`;
-            } else {
-                ultimas.forEach(e => {
-                    const tipoClass = e.tipo === 'Azul' ? 'badge-azul' : 'badge-vermelha';
-                    const statusClass = e.status === 'Concluída' ? 'status-concluida' : 'status-aberta';
-                    html += `<tr><td>#${e.id}</td><td>${e.titulo}</td><td><span class="${tipoClass}">${e.tipo}</span></td><td><span class="${statusClass}">${e.status}</span></td></tr>`;
-                });
-            }
-
-            html += `</tbody></table>`;
-            document.getElementById('conteudo').innerHTML = html;
         }
 
-        // ================================================
-        // ETIQUETAS
-        // ================================================
-        function renderEtiquetas() {
-            let html = `
-                <table>
-                    <thead><tr><th>ID</th><th>Título</th><th>Descrição</th><th>Tipo</th><th>Status</th><th>Ações</th></tr></thead>
-                    <tbody>
-            `;
+        // ================================================================
+        // DASHBOARD
+        // ================================================================
+        async function carregarDashboard() {
+            mostrarLoading();
+            
+            try {
+                // Buscar dados da API
+                const etiquetas = await window.EtiquetasAPI.listar().catch(() => []);
+                const ga = await window.GAAPI.listar().catch(() => []);
+                const melhorias = await window.MelhoriasAPI.listar().catch(() => []);
+                const acidentes = await window.AcidentesAPI.listar().catch(() => []);
 
-            if (etiquetas.length === 0) {
-                html += `<tr><td colspan="6" style="text-align:center;color:#888;padding:30px;">Nenhuma etiqueta</td></tr>`;
-            } else {
-                etiquetas.forEach(e => {
-                    const tipoClass = e.tipo === 'Azul' ? 'badge-azul' : 'badge-vermelha';
-                    const statusClass = e.status === 'Concluída' ? 'status-concluida' : 'status-aberta';
+                dadosEtiquetas = etiquetas;
+                dadosGA = ga;
+                dadosMelhorias = melhorias;
+                dadosAcidentes = acidentes;
+
+                const total = etiquetas.length;
+                const abertas = etiquetas.filter(e => e.status !== 'Concluída').length;
+                const vermelhas = etiquetas.filter(e => e.tipo === 'Vermelha' && e.status !== 'Concluída').length;
+                const azuis = etiquetas.filter(e => e.tipo === 'Azul' && e.status !== 'Concluída').length;
+                const acidentesAbertos = acidentes.filter(a => a.status !== 'Resolvido').length;
+
+                // Atualizar badges
+                document.getElementById('badge-etiquetas').textContent = abertas;
+                document.getElementById('badge-ga').textContent = ga.length;
+                document.getElementById('badge-melhorias').textContent = melhorias.length;
+                document.getElementById('badge-acidentes').textContent = acidentesAbertos;
+
+                let html = `
+                    <div class="dashboard-cards">
+                        <div class="card">
+                            <div class="icon">📋</div>
+                            <div class="value">${total}</div>
+                            <div class="label">Total Etiquetas</div>
+                            <div class="sub">${abertas} em aberto</div>
+                        </div>
+                        <div class="card">
+                            <div class="icon">⏳</div>
+                            <div class="value">${abertas}</div>
+                            <div class="label">Em Aberto</div>
+                        </div>
+                        <div class="card">
+                            <div class="icon">🔴</div>
+                            <div class="value">${vermelhas}</div>
+                            <div class="label">Vermelhas</div>
+                        </div>
+                        <div class="card">
+                            <div class="icon">🔵</div>
+                            <div class="value">${azuis}</div>
+                            <div class="label">Azuis</div>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <div class="table-header">
+                            <h3>📋 Últimas Etiquetas</h3>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Título</th>
+                                    <th>Tipo</th>
+                                    <th>Status</th>
+                                    <th>Data</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
+
+                const ultimas = [...etiquetas].reverse().slice(0, 5);
+                if (ultimas.length === 0) {
                     html += `
                         <tr>
-                            <td>#${e.id}</td>
-                            <td><b>${e.titulo}</b></td>
-                            <td>${e.descricao.substring(0,40)}${e.descricao.length > 40 ? '...' : ''}</td>
-                            <td><span class="${tipoClass}">${e.tipo}</span></td>
-                            <td><span class="${statusClass}">${e.status}</span></td>
-                            <td>
-                                ${e.status !== 'Concluída' ? `
-                                    <button class="btn btn-sm btn-primary" onclick="atualizarEtiqueta(${e.id}, 'Em Análise')">Analisar</button>
-                                    <button class="btn btn-sm btn-success" onclick="atualizarEtiqueta(${e.id}, 'Concluída')">Concluir</button>
-                                ` : ''}
-                                <button class="btn btn-sm btn-danger" onclick="deletarEtiqueta(${e.id})">🗑️</button>
+                            <td colspan="5" class="empty-state">
+                                <div style="padding:30px;color:#6E6F8B;">Nenhuma etiqueta cadastrada</div>
                             </td>
                         </tr>
                     `;
-                });
-            }
+                } else {
+                    ultimas.forEach(e => {
+                        const tipoClass = e.tipo === 'Azul' ? 'badge-azul' : 'badge-vermelha';
+                        const statusClass = e.status === 'Concluída' ? 'status-concluida' : 'status-aberta';
+                        html += `
+                            <tr>
+                                <td>#${e.id}</td>
+                                <td><strong>${e.titulo}</strong></td>
+                                <td><span class="${tipoClass}">${e.tipo}</span></td>
+                                <td><span class="${statusClass}">${e.status}</span></td>
+                                <td>${e.data_abertura ? new Date(e.data_abertura).toLocaleDateString('pt-BR') : '-'}</td>
+                            </tr>
+                        `;
+                    });
+                }
 
-            html += `</tbody></table>`;
-            document.getElementById('conteudo').innerHTML = html;
+                html += `
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+
+                document.getElementById('page-content').innerHTML = html;
+
+            } catch (error) {
+                console.error('❌ Erro ao carregar dashboard:', error);
+                document.getElementById('page-content').innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">⚠️</div>
+                        <h3>Erro ao carregar dados</h3>
+                        <p>${error.message}</p>
+                        <button onclick="carregarPagina('dashboard')" style="margin-top:16px;padding:10px 24px;background:#6C63FF;border:none;border-radius:8px;color:#fff;cursor:pointer;">Tentar novamente</button>
+                    </div>
+                `;
+            }
         }
 
-        function salvarEtiqueta(e) {
-            e.preventDefault();
-            const id = document.getElementById('et-id').value;
-            const hoje = new Date().toLocaleDateString('pt-BR');
+        // ================================================================
+        // ETIQUETAS
+        // ================================================================
+        async function carregarEtiquetas() {
+            mostrarLoading();
+
+            try {
+                const etiquetas = await window.EtiquetasAPI.listar();
+                dadosEtiquetas = etiquetas;
+
+                let html = `
+                    <div class="table-container">
+                        <div class="table-header">
+                            <h3>🏷️ Todas as Etiquetas</h3>
+                            <div class="filtros">
+                                <select id="filtro-tipo" onchange="filtrarEtiquetas()">
+                                    <option value="">Todos</option>
+                                    <option value="Azul">🔵 Azul</option>
+                                    <option value="Vermelha">🔴 Vermelha</option>
+                                </select>
+                                <select id="filtro-status" onchange="filtrarEtiquetas()">
+                                    <option value="">Todos</option>
+                                    <option value="Aberta">⏳ Aberta</option>
+                                    <option value="Em Análise">🔍 Em Análise</option>
+                                    <option value="Concluída">✅ Concluída</option>
+                                </select>
+                            </div>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Título</th>
+                                    <th>Descrição</th>
+                                    <th>Tipo</th>
+                                    <th>Status</th>
+                                    <th>Linha</th>
+                                    <th>Responsável</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabela-etiquetas">
+                `;
+
+                if (etiquetas.length === 0) {
+                    html += `
+                        <tr>
+                            <td colspan="8" class="empty-state">
+                                <div style="padding:30px;color:#6E6F8B;">Nenhuma etiqueta cadastrada</div>
+                            </td>
+                        </tr>
+                    `;
+                } else {
+                    etiquetas.forEach(e => {
+                        const tipoClass = e.tipo === 'Azul' ? 'badge-azul' : 'badge-vermelha';
+                        const statusClass = e.status === 'Concluída' ? 'status-concluida' : 'status-aberta';
+                        html += `
+                            <tr data-tipo="${e.tipo}" data-status="${e.status}">
+                                <td>#${e.id}</td>
+                                <td><strong>${e.titulo}</strong></td>
+                                <td>${e.descricao ? e.descricao.substring(0, 50) + (e.descricao.length > 50 ? '...' : '') : '-'}</td>
+                                <td><span class="${tipoClass}">${e.tipo}</span></td>
+                                <td><span class="${statusClass}">${e.status}</span></td>
+                                <td>${e.linha || '-'}</td>
+                                <td>${e.responsavel || '-'}</td>
+                                <td>
+                                    <div class="acoes">
+                                        ${e.status !== 'Concluída' ? `
+                                            <button class="btn-sm btn-primary" onclick="atualizarEtiqueta(${e.id}, 'Em Análise')">Analisar</button>
+                                            <button class="btn-sm btn-success" onclick="atualizarEtiqueta(${e.id}, 'Concluída')">Concluir</button>
+                                        ` : ''}
+                                        <button class="btn-sm btn-danger" onclick="deletarEtiqueta(${e.id})">🗑️</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                }
+
+                html += `
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+
+                document.getElementById('page-content').innerHTML = html;
+
+            } catch (error) {
+                console.error('❌ Erro ao carregar etiquetas:', error);
+                document.getElementById('page-content').innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">⚠️</div>
+                        <h3>Erro ao carregar etiquetas</h3>
+                        <p>${error.message}</p>
+                        <button onclick="carregarEtiquetas()" style="margin-top:16px;padding:10px 24px;background:#6C63FF;border:none;border-radius:8px;color:#fff;cursor:pointer;">Tentar novamente</button>
+                    </div>
+                `;
+            }
+        }
+
+        function filtrarEtiquetas() {
+            const tipo = document.getElementById('filtro-tipo').value;
+            const status = document.getElementById('filtro-status').value;
+            const rows = document.querySelectorAll('#tabela-etiquetas tr');
+
+            rows.forEach(row => {
+                if (row.cells.length === 1) return;
+                const rowTipo = row.dataset.tipo || '';
+                const rowStatus = row.dataset.status || '';
+                let mostrar = true;
+                if (tipo && rowTipo !== tipo) mostrar = false;
+                if (status && rowStatus !== status) mostrar = false;
+                row.style.display = mostrar ? '' : 'none';
+            });
+        }
+
+        async function salvarEtiqueta(event) {
+            event.preventDefault();
+            const id = document.getElementById('etiqueta-id').value;
+            
             const dados = {
-                titulo: document.getElementById('et-titulo').value,
-                descricao: document.getElementById('et-descricao').value,
-                tipo: document.getElementById('et-tipo').value,
-                linha: document.getElementById('et-linha').value,
-                responsavel: document.getElementById('et-responsavel').value
+                titulo: document.getElementById('etiqueta-titulo').value,
+                descricao: document.getElementById('etiqueta-descricao').value,
+                tipo: document.getElementById('etiqueta-tipo').value,
+                linha: document.getElementById('etiqueta-linha').value,
+                responsavel: document.getElementById('etiqueta-responsavel').value,
+                via: document.getElementById('etiqueta-via').value,
+                observacoes: document.getElementById('etiqueta-observacoes').value
             };
 
-            if (id) {
-                const idx = etiquetas.findIndex(el => el.id === parseInt(id));
-                if (idx !== -1) etiquetas[idx] = { ...etiquetas[idx], ...dados };
-            } else {
-                etiquetas.push({ id: etId++, ...dados, status: 'Aberta', data: hoje });
-            }
-
-            fecharModal('modal-etiqueta');
-            pagina(paginaAtual);
-        }
-
-        function atualizarEtiqueta(id, status) {
-            const el = etiquetas.find(e => e.id === id);
-            if (el) { el.status = status; pagina(paginaAtual); }
-        }
-
-        function deletarEtiqueta(id) {
-            if (confirm('Excluir?')) {
-                etiquetas = etiquetas.filter(e => e.id !== id);
-                pagina(paginaAtual);
+            try {
+                if (id) {
+                    await window.EtiquetasAPI.atualizar(parseInt(id), dados);
+                } else {
+                    await window.EtiquetasAPI.criar(dados);
+                }
+                fecharModal('modal-etiqueta');
+                carregarPagina(paginaAtual);
+            } catch (error) {
+                alert('❌ Erro ao salvar: ' + error.message);
             }
         }
 
-        // ================================================
-        // GA
-        // ================================================
-        function renderGA() {
-            let html = `<table><thead><tr><th>ID</th><th>Data</th><th>Pauta</th><th>Ações</th></tr></thead><tbody>`;
-            if (gaLista.length === 0) {
-                html += `<tr><td colspan="4" style="text-align:center;color:#888;padding:30px;">Nenhuma reunião</td></tr>`;
-            } else {
-                gaLista.forEach(r => {
-                    html += `<tr><td>#${r.id}</td><td>${r.data}</td><td>${r.pauta}</td><td><button class="btn btn-sm btn-danger" onclick="deletarGA(${r.id})">🗑️</button></td></tr>`;
-                });
+        async function atualizarEtiqueta(id, novoStatus) {
+            try {
+                await window.EtiquetasAPI.atualizar(id, { status: novoStatus });
+                carregarPagina(paginaAtual);
+            } catch (error) {
+                alert('❌ Erro ao atualizar: ' + error.message);
             }
-            html += `</tbody></table>`;
-            document.getElementById('conteudo').innerHTML = html;
         }
 
-        function salvarGA(e) {
-            e.preventDefault();
+        async function deletarEtiqueta(id) {
+            if (!confirm('Deseja excluir esta etiqueta?')) return;
+            try {
+                await window.EtiquetasAPI.deletar(id);
+                carregarPagina(paginaAtual);
+            } catch (error) {
+                alert('❌ Erro ao deletar: ' + error.message);
+            }
+        }
+
+        // ================================================================
+        // GA (GRUPO AUTÔNOMO)
+        // ================================================================
+        async function carregarGA() {
+            mostrarLoading();
+
+            try {
+                const reunioes = await window.GAAPI.listar();
+                dadosGA = reunioes;
+
+                let html = `
+                    <div class="table-container">
+                        <div class="table-header">
+                            <h3>👥 Reuniões do GA</h3>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Data</th>
+                                    <th>Pauta</th>
+                                    <th>Participantes</th>
+                                    <th>Decisões</th>
+                                    <th>Ações</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
+
+                if (reunioes.length === 0) {
+                    html += `
+                        <tr>
+                            <td colspan="7" class="empty-state">
+                                <div style="padding:30px;color:#6E6F8B;">Nenhuma reunião cadastrada</div>
+                            </td>
+                        </tr>
+                    `;
+                } else {
+                    reunioes.forEach(r => {
+                        html += `
+                            <tr>
+                                <td>#${r.id}</td>
+                                <td>${r.data || '-'}</td>
+                                <td><strong>${r.pauta}</strong></td>
+                                <td>${r.participantes || '-'}</td>
+                                <td>${r.decisoes ? r.decisoes.substring(0, 50) + (r.decisoes.length > 50 ? '...' : '') : '-'}</td>
+                                <td><span class="badge-info">${r.acoes_geradas || 0}</span></td>
+                                <td>
+                                    <div class="acoes">
+                                        <button class="btn-sm btn-danger" onclick="deletarGA(${r.id})">🗑️</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                }
+
+                html += `
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+
+                document.getElementById('page-content').innerHTML = html;
+
+            } catch (error) {
+                console.error('❌ Erro ao carregar GA:', error);
+                document.getElementById('page-content').innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">⚠️</div>
+                        <h3>Erro ao carregar reuniões</h3>
+                        <p>${error.message}</p>
+                        <button onclick="carregarGA()" style="margin-top:16px;padding:10px 24px;background:#6C63FF;border:none;border-radius:8px;color:#fff;cursor:pointer;">Tentar novamente</button>
+                    </div>
+                `;
+            }
+        }
+
+        async function salvarGA(event) {
+            event.preventDefault();
             const id = document.getElementById('ga-id').value;
-            const data = document.getElementById('ga-data').value;
-            const dataFormatada = new Date(data+'T00:00:00').toLocaleDateString('pt-BR');
+            const dataISO = document.getElementById('ga-data').value;
+            
             const dados = {
-                data: dataFormatada,
+                data: dataISO,
                 pauta: document.getElementById('ga-pauta').value,
                 participantes: document.getElementById('ga-participantes').value,
                 decisoes: document.getElementById('ga-decisoes').value,
-                acoes: parseInt(document.getElementById('ga-acoes').value) || 0
+                acoes_geradas: parseInt(document.getElementById('ga-acoes').value) || 0
             };
-            if (id) {
-                const idx = gaLista.findIndex(r => r.id === parseInt(id));
-                if (idx !== -1) gaLista[idx] = { ...gaLista[idx], ...dados };
-            } else {
-                gaLista.push({ id: gaId++, ...dados });
+
+            try {
+                if (id) {
+                    await window.GAAPI.atualizar(parseInt(id), dados);
+                } else {
+                    await window.GAAPI.criar(dados);
+                }
+                fecharModal('modal-ga');
+                carregarPagina(paginaAtual);
+            } catch (error) {
+                alert('❌ Erro ao salvar: ' + error.message);
             }
-            fecharModal('modal-ga');
-            pagina(paginaAtual);
         }
 
-        function deletarGA(id) {
-            if (confirm('Excluir?')) { gaLista = gaLista.filter(r => r.id !== id); pagina(paginaAtual); }
+        async function deletarGA(id) {
+            if (!confirm('Deseja excluir esta reunião?')) return;
+            try {
+                await window.GAAPI.deletar(id);
+                carregarPagina(paginaAtual);
+            } catch (error) {
+                alert('❌ Erro ao deletar: ' + error.message);
+            }
         }
 
-        // ================================================
+        // ================================================================
         // MELHORIAS
-        // ================================================
-        function renderMelhorias() {
-            let html = `<div class="grid-melhorias">`;
-            if (melhoriasLista.length === 0) {
-                html += `<div class="empty">Nenhuma melhoria</div>`;
-            } else {
-                melhoriasLista.forEach(m => {
+        // ================================================================
+        async function carregarMelhorias() {
+            mostrarLoading();
+
+            try {
+                const melhorias = await window.MelhoriasAPI.listar();
+                dadosMelhorias = melhorias;
+
+                let html = `<div class="grid-melhorias">`;
+
+                if (melhorias.length === 0) {
                     html += `
-                        <div class="card-melhoria">
-                            <h4>${m.titulo}</h4>
-                            <div class="desc">${m.descricao}</div>
-                            <div class="footer">
-                                <span style="color:#888;font-size:12px;">${m.categoria}</span>
-                                <button class="btn btn-sm btn-danger" onclick="deletarMelhoria(${m.id})">🗑️</button>
-                            </div>
+                        <div class="empty-state" style="grid-column:1/-1;">
+                            <div class="icon">📈</div>
+                            <h3>Nenhuma melhoria cadastrada</h3>
+                            <p>Clique em "+ Novo" para criar uma melhoria</p>
                         </div>
                     `;
-                });
+                } else {
+                    melhorias.forEach(m => {
+                        const categoriaClass = m.categoria === 'Ver & Agir' ? 'badge-success' : 'badge-info';
+                        html += `
+                            <div class="card-melhoria">
+                                <div class="header">
+                                    <h4>${m.titulo}</h4>
+                                    <span class="${categoriaClass}">${m.categoria}</span>
+                                </div>
+                                <div class="desc">${m.descricao}</div>
+                                <div class="footer">
+                                    <small>📅 ${m.data_criacao ? new Date(m.data_criacao).toLocaleDateString('pt-BR') : '-'}</small>
+                                    <button class="btn-sm btn-danger" onclick="deletarMelhoria(${m.id})">🗑️</button>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+
+                html += `</div>`;
+                document.getElementById('page-content').innerHTML = html;
+
+            } catch (error) {
+                console.error('❌ Erro ao carregar melhorias:', error);
+                document.getElementById('page-content').innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">⚠️</div>
+                        <h3>Erro ao carregar melhorias</h3>
+                        <p>${error.message}</p>
+                        <button onclick="carregarMelhorias()" style="margin-top:16px;padding:10px 24px;background:#6C63FF;border:none;border-radius:8px;color:#fff;cursor:pointer;">Tentar novamente</button>
+                    </div>
+                `;
             }
-            html += `</div>`;
-            document.getElementById('conteudo').innerHTML = html;
         }
 
-        function salvarMelhoria(e) {
-            e.preventDefault();
-            const id = document.getElementById('me-id').value;
+        async function salvarMelhoria(event) {
+            event.preventDefault();
+            const id = document.getElementById('melhoria-id').value;
+            
             const dados = {
-                titulo: document.getElementById('me-titulo').value,
-                descricao: document.getElementById('me-descricao').value,
-                categoria: document.getElementById('me-categoria').value,
-                data: new Date().toLocaleDateString('pt-BR')
+                titulo: document.getElementById('melhoria-titulo').value,
+                descricao: document.getElementById('melhoria-descricao').value,
+                categoria: document.getElementById('melhoria-categoria').value
             };
-            if (id) {
-                const idx = melhoriasLista.findIndex(m => m.id === parseInt(id));
-                if (idx !== -1) melhoriasLista[idx] = { ...melhoriasLista[idx], ...dados };
-            } else {
-                melhoriasLista.push({ id: meId++, ...dados });
+
+            try {
+                if (id) {
+                    await window.MelhoriasAPI.atualizar(parseInt(id), dados);
+                } else {
+                    await window.MelhoriasAPI.criar(dados);
+                }
+                fecharModal('modal-melhoria');
+                carregarPagina(paginaAtual);
+            } catch (error) {
+                alert('❌ Erro ao salvar: ' + error.message);
             }
-            fecharModal('modal-melhoria');
-            pagina(paginaAtual);
         }
 
-        function deletarMelhoria(id) {
-            if (confirm('Excluir?')) { melhoriasLista = melhoriasLista.filter(m => m.id !== id); pagina(paginaAtual); }
+        async function deletarMelhoria(id) {
+            if (!confirm('Deseja excluir esta melhoria?')) return;
+            try {
+                await window.MelhoriasAPI.deletar(id);
+                carregarPagina(paginaAtual);
+            } catch (error) {
+                alert('❌ Erro ao deletar: ' + error.message);
+            }
         }
 
-        // ================================================
-        // ACIDENTES
-        // ================================================
-        function renderAcidentes() {
-            let html = `<table><thead><tr><th>ID</th><th>Descrição</th><th>Local</th><th>Status</th><th>Ações</th></tr></thead><tbody>`;
-            if (acidentesLista.length === 0) {
-                html += `<tr><td colspan="5" style="text-align:center;color:#888;padding:30px;">Nenhum registro</td></tr>`;
-            } else {
-                acidentesLista.forEach(a => {
-                    const statusClass = a.status === 'Resolvido' ? 'status-concluida' : 'status-aberta';
+        // ================================================================
+        // QUASE ACIDENTES
+        // ================================================================
+        async function carregarAcidentes() {
+            mostrarLoading();
+
+            try {
+                const acidentes = await window.AcidentesAPI.listar();
+                dadosAcidentes = acidentes;
+
+                let html = `
+                    <div class="table-container">
+                        <div class="table-header">
+                            <h3>⚠️ Registro de Quase Acidentes</h3>
+                            <div class="filtros">
+                                <select id="filtro-status-acidente" onchange="filtrarAcidentes()">
+                                    <option value="">Todos</option>
+                                    <option value="Reportado">📢 Reportado</option>
+                                    <option value="Em Análise">🔍 Em Análise</option>
+                                    <option value="Resolvido">✅ Resolvido</option>
+                                </select>
+                            </div>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Descrição</th>
+                                    <th>Local</th>
+                                    <th>Responsável</th>
+                                    <th>Status</th>
+                                    <th>Data</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabela-acidentes">
+                `;
+
+                if (acidentes.length === 0) {
                     html += `
                         <tr>
-                            <td>#${a.id}</td>
-                            <td>${a.descricao}</td>
-                            <td>${a.local}</td>
-                            <td><span class="${statusClass}">${a.status}</span></td>
-                            <td>
-                                ${a.status !== 'Resolvido' ? `
-                                    <button class="btn btn-sm btn-primary" onclick="atualizarAcidente(${a.id}, 'Em Análise')">Analisar</button>
-                                    <button class="btn btn-sm btn-success" onclick="atualizarAcidente(${a.id}, 'Resolvido')">Resolver</button>
-                                ` : ''}
-                                <button class="btn btn-sm btn-danger" onclick="deletarAcidente(${a.id})">🗑️</button>
+                            <td colspan="7" class="empty-state">
+                                <div style="padding:30px;color:#6E6F8B;">Nenhum registro de quase acidente</div>
                             </td>
                         </tr>
                     `;
-                });
+                } else {
+                    acidentes.forEach(a => {
+                        const statusClass = {
+                            'Reportado': 'status-aberta',
+                            'Em Análise': 'status-analise',
+                            'Resolvido': 'status-concluida'
+                        }[a.status] || 'status-aberta';
+
+                        html += `
+                            <tr data-status="${a.status}">
+                                <td>#${a.id}</td>
+                                <td>${a.descricao}</td>
+                                <td>${a.local}</td>
+                                <td>${a.responsavel}</td>
+                                <td><span class="${statusClass}">${a.status}</span></td>
+                                <td>${a.data ? new Date(a.data).toLocaleDateString('pt-BR') : '-'}</td>
+                                <td>
+                                    <div class="acoes">
+                                        ${a.status !== 'Resolvido' ? `
+                                            <button class="btn-sm btn-primary" onclick="atualizarAcidente(${a.id}, 'Em Análise')">Analisar</button>
+                                            <button class="btn-sm btn-success" onclick="atualizarAcidente(${a.id}, 'Resolvido')">Resolver</button>
+                                        ` : ''}
+                                        <button class="btn-sm btn-danger" onclick="deletarAcidente(${a.id})">🗑️</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                }
+
+                html += `
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+
+                document.getElementById('page-content').innerHTML = html;
+
+            } catch (error) {
+                console.error('❌ Erro ao carregar acidentes:', error);
+                document.getElementById('page-content').innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">⚠️</div>
+                        <h3>Erro ao carregar registros</h3>
+                        <p>${error.message}</p>
+                        <button onclick="carregarAcidentes()" style="margin-top:16px;padding:10px 24px;background:#6C63FF;border:none;border-radius:8px;color:#fff;cursor:pointer;">Tentar novamente</button>
+                    </div>
+                `;
             }
-            html += `</tbody></table>`;
-            document.getElementById('conteudo').innerHTML = html;
         }
 
-        function salvarAcidente(e) {
-            e.preventDefault();
-            const id = document.getElementById('ac-id').value;
+        function filtrarAcidentes() {
+            const status = document.getElementById('filtro-status-acidente').value;
+            const rows = document.querySelectorAll('#tabela-acidentes tr');
+
+            rows.forEach(row => {
+                if (row.cells.length === 1) return;
+                const rowStatus = row.dataset.status || '';
+                row.style.display = (status && rowStatus !== status) ? 'none' : '';
+            });
+        }
+
+        async function salvarAcidente(event) {
+            event.preventDefault();
+            const id = document.getElementById('acidente-id').value;
+            
             const dados = {
-                descricao: document.getElementById('ac-descricao').value,
-                local: document.getElementById('ac-local').value,
-                responsavel: document.getElementById('ac-responsavel').value,
-                status: document.getElementById('ac-status').value,
-                data: new Date().toLocaleDateString('pt-BR')
+                descricao: document.getElementById('acidente-descricao').value,
+                local: document.getElementById('acidente-local').value,
+                responsavel: document.getElementById('acidente-responsavel').value,
+                status: document.getElementById('acidente-status').value
             };
-            if (id) {
-                const idx = acidentesLista.findIndex(a => a.id === parseInt(id));
-                if (idx !== -1) acidentesLista[idx] = { ...acidentesLista[idx], ...dados };
-            } else {
-                acidentesLista.push({ id: acId++, ...dados });
+
+            try {
+                if (id) {
+                    await window.AcidentesAPI.atualizar(parseInt(id), dados);
+                } else {
+                    await window.AcidentesAPI.criar(dados);
+                }
+                fecharModal('modal-acidente');
+                carregarPagina(paginaAtual);
+            } catch (error) {
+                alert('❌ Erro ao salvar: ' + error.message);
             }
-            fecharModal('modal-acidente');
-            pagina(paginaAtual);
         }
 
-        function atualizarAcidente(id, status) {
-            const el = acidentesLista.find(a => a.id === id);
-            if (el) { el.status = status; pagina(paginaAtual); }
+        async function atualizarAcidente(id, novoStatus) {
+            try {
+                await window.AcidentesAPI.atualizar(id, { status: novoStatus });
+                carregarPagina(paginaAtual);
+            } catch (error) {
+                alert('❌ Erro ao atualizar: ' + error.message);
+            }
         }
 
-        function deletarAcidente(id) {
-            if (confirm('Excluir?')) { acidentesLista = acidentesLista.filter(a => a.id !== id); pagina(paginaAtual); }
+        async function deletarAcidente(id) {
+            if (!confirm('Deseja excluir este registro?')) return;
+            try {
+                await window.AcidentesAPI.deletar(id);
+                carregarPagina(paginaAtual);
+            } catch (error) {
+                alert('❌ Erro ao deletar: ' + error.message);
+            }
         }
 
-        // ================================================
+        // ================================================================
         // MODAIS
-        // ================================================
+        // ================================================================
         function abrirModal() {
-            switch(paginaAtual) {
+            console.log('📝 Abrindo modal para:', paginaAtual);
+
+            switch (paginaAtual) {
                 case 'etiquetas':
                     document.getElementById('modal-etiqueta').style.display = 'flex';
-                    document.getElementById('modal-etiqueta').querySelector('form').reset();
-                    document.getElementById('et-id').value = '';
+                    document.getElementById('form-etiqueta').reset();
+                    document.getElementById('etiqueta-id').value = '';
+                    document.body.style.overflow = 'hidden';
                     break;
                 case 'ga':
                     document.getElementById('modal-ga').style.display = 'flex';
-                    document.getElementById('modal-ga').querySelector('form').reset();
+                    document.getElementById('form-ga').reset();
                     document.getElementById('ga-id').value = '';
                     document.getElementById('ga-data').value = new Date().toISOString().split('T')[0];
+                    document.body.style.overflow = 'hidden';
                     break;
                 case 'melhorias':
                     document.getElementById('modal-melhoria').style.display = 'flex';
-                    document.getElementById('modal-melhoria').querySelector('form').reset();
-                    document.getElementById('me-id').value = '';
+                    document.getElementById('form-melhoria').reset();
+                    document.getElementById('melhoria-id').value = '';
+                    document.body.style.overflow = 'hidden';
                     break;
                 case 'acidentes':
                     document.getElementById('modal-acidente').style.display = 'flex';
-                    document.getElementById('modal-acidente').querySelector('form').reset();
-                    document.getElementById('ac-id').value = '';
+                    document.getElementById('form-acidente').reset();
+                    document.getElementById('acidente-id').value = '';
+                    document.getElementById('acidente-status').value = 'Reportado';
+                    document.body.style.overflow = 'hidden';
                     break;
+                default:
+                    alert('Nenhuma ação disponível para esta página');
             }
         }
 
         function fecharModal(id) {
             document.getElementById(id).style.display = 'none';
+            document.body.style.overflow = 'auto';
         }
 
-        // Fechar clicando fora
+        // Fechar modal clicando fora
         document.addEventListener('click', function(e) {
             if (e.target.classList.contains('modal')) {
                 e.target.style.display = 'none';
+                document.body.style.overflow = 'auto';
             }
         });
 
-        // Fechar com ESC
+        // Fechar modal com ESC
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
                 document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
+                document.body.style.overflow = 'auto';
             }
         });
 
-        // ================================================
-        // INICIAR
-        // ================================================
-        pagina('dashboard');
+        // ================================================================
+        // INICIALIZAR
+        // ================================================================
+        // Testar conexão com o backend antes de iniciar
+        testarBackend().then(() => {
+            carregarPagina('dashboard');
+        });
+
         console.log('✅ SIMFlow pronto!');
+        console.log('📡 API URL:', 'http://localhost:5000/api');
     </script>
 
 </body>
