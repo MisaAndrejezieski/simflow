@@ -31,6 +31,7 @@
             text-align: center;
             margin-bottom: 8px;
             background: linear-gradient(135deg, #6C63FF, #8B83FF);
+            background-clip: text;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
@@ -118,7 +119,7 @@
 
         /* Sidebar */
         .sidebar { width: 220px; background: #1A1932; padding: 20px 16px; border-right: 1px solid rgba(255,255,255,0.06); display: flex; flex-direction: column; flex-shrink: 0; height: 100vh; overflow-y: auto; }
-        .sidebar h1 { font-size: 22px; font-weight: 800; background: linear-gradient(135deg, #6C63FF 0%, #3F3D9E 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+        .sidebar h1 { font-size: 22px; font-weight: 800; background: linear-gradient(135deg, #6C63FF 0%, #3F3D9E 100%); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.06); }
         .sidebar .user-info { padding: 12px; background: rgba(255,255,255,0.05); border-radius: 10px; margin-bottom: 20px; }
         .sidebar .user-info .nome { font-weight: 600; font-size: 14px; }
         .sidebar .user-info .perfil { font-size: 12px; color: #6E6F8B; }
@@ -140,7 +141,7 @@
         /* Conteúdo */
         .content { flex: 1; padding: 30px 40px; overflow-y: auto; height: 100vh; display: flex; flex-direction: column; }
         .content-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; gap: 16px; }
-        .content-header h2 { font-size: 26px; font-weight: 700; background: linear-gradient(135deg, #6C63FF, #8B83FF); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .content-header h2 { font-size: 26px; font-weight: 700; background: linear-gradient(135deg, #6C63FF, #8B83FF); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .content-header .btn-novo { background: linear-gradient(135deg, #6C63FF, #3F3D9E); color: #FFFFFF; border: none; padding: 10px 24px; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 14px; transition: all 0.3s ease; box-shadow: 0 4px 16px rgba(108,99,255,0.3); }
         .content-header .btn-novo:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(108,99,255,0.4); }
         .content-header .btn-novo.hidden { display: none; }
@@ -152,7 +153,7 @@
         .card { background: #1A1932; padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.06); transition: all 0.3s ease; }
         .card:hover { transform: translateY(-4px); border-color: #6C63FF; box-shadow: 0 8px 32px rgba(108,99,255,0.1); }
         .card .icon { font-size: 28px; margin-bottom: 8px; }
-        .card .value { font-size: 32px; font-weight: 800; background: linear-gradient(135deg, #6C63FF, #8B83FF); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .card .value { font-size: 32px; font-weight: 800; background: linear-gradient(135deg, #6C63FF, #8B83FF); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .card .label { color: #A7A9BE; font-size: 13px; margin-top: 4px; }
 
         /* Tabelas */
@@ -201,7 +202,7 @@
         @keyframes modalIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
         .modal-content .close { float: right; background: none; border: none; color: #A7A9BE; font-size: 24px; cursor: pointer; transition: all 0.3s ease; line-height: 1; }
         .modal-content .close:hover { color: #FFFFFF; transform: rotate(90deg); }
-        .modal-content h2 { font-size: 22px; font-weight: 700; margin-bottom: 20px; background: linear-gradient(135deg, #6C63FF, #8B83FF); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .modal-content h2 { font-size: 22px; font-weight: 700; margin-bottom: 20px; background: linear-gradient(135deg, #6C63FF, #8B83FF); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .modal-content label { display: block; margin: 12px 0 4px; font-size: 13px; font-weight: 500; color: #A7A9BE; }
         .modal-content input, .modal-content select, .modal-content textarea { width: 100%; padding: 10px 14px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); background: #0F0E17; color: #FFFFFF; font-size: 14px; transition: all 0.3s ease; outline: none; }
         .modal-content input:focus, .modal-content select:focus, .modal-content textarea:focus { border-color: #6C63FF; box-shadow: 0 0 0 3px rgba(108,99,255,0.2); }
