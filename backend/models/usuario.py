@@ -1,7 +1,5 @@
-from datetime import datetime
-
 from database.conexao import db
-
+from datetime import datetime
 
 class Usuario(db.Model):
     __tablename__ = 'usuarios'
@@ -10,7 +8,7 @@ class Usuario(db.Model):
     nome = db.Column(db.String(100), nullable=False)
     usuario = db.Column(db.String(50), unique=True, nullable=False)
     senha = db.Column(db.String(200), nullable=False)
-    perfil = db.Column(db.String(20), nullable=False)  # operador, tecnico, manutentor, gestor
+    perfil = db.Column(db.String(20), nullable=False)
     setor = db.Column(db.String(50))
     ativo = db.Column(db.Boolean, default=True)
     criado_em = db.Column(db.DateTime, default=datetime.utcnow)
@@ -24,3 +22,4 @@ class Usuario(db.Model):
             'setor': self.setor,
             'ativo': self.ativo
         }
+        
