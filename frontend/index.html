@@ -3,811 +3,593 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SIMFlow - Gestão de Melhorias</title>
-    <link rel="stylesheet" href="css/style.css">
+    <title>SIMFlow</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+        body { display: flex; height: 100vh; background: #0F0E17; color: #fff; }
+        
+        .sidebar { width: 200px; background: #1A1932; padding: 20px; border-right: 1px solid #333; }
+        .sidebar h1 { font-size: 20px; margin-bottom: 30px; color: #6C63FF; }
+        .sidebar ul { list-style: none; }
+        .sidebar ul li { padding: 12px 16px; cursor: pointer; border-radius: 8px; margin-bottom: 4px; }
+        .sidebar ul li:hover { background: #2A2A4A; }
+        .sidebar ul li.active { background: #6C63FF; }
+        .sidebar ul li .badge { float: right; background: #FF6B6B; padding: 2px 10px; border-radius: 12px; font-size: 12px; }
+        
+        .content { flex: 1; padding: 30px; overflow-y: auto; }
+        .content-header { display: flex; justify-content: space-between; margin-bottom: 20px; }
+        .btn { padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        .btn-primary { background: #6C63FF; color: #fff; }
+        .btn-primary:hover { background: #5A52D5; }
+        .btn-sm { padding: 5px 12px; font-size: 12px; border-radius: 4px; }
+        .btn-danger { background: #FF6B6B; color: #fff; }
+        .btn-success { background: #00C9A7; color: #fff; }
+        
+        .cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 30px; }
+        .card { background: #1A1932; padding: 20px; border-radius: 12px; border: 1px solid #333; }
+        .card .value { font-size: 32px; font-weight: bold; color: #6C63FF; }
+        .card .label { color: #888; font-size: 14px; }
+        
+        table { width: 100%; border-collapse: collapse; background: #1A1932; border-radius: 12px; overflow: hidden; }
+        th { background: #2A2A4A; padding: 12px; text-align: left; font-size: 12px; text-transform: uppercase; }
+        td { padding: 12px; border-bottom: 1px solid #333; }
+        .badge-azul { background: #4ECDC4; padding: 2px 12px; border-radius: 12px; font-size: 12px; }
+        .badge-vermelha { background: #FF6B6B; padding: 2px 12px; border-radius: 12px; font-size: 12px; }
+        .status-aberta { background: #FFB800; padding: 2px 12px; border-radius: 12px; font-size: 12px; color: #000; }
+        .status-concluida { background: #00C9A7; padding: 2px 12px; border-radius: 12px; font-size: 12px; }
+        
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); justify-content: center; align-items: center; }
+        .modal-content { background: #1A1932; padding: 30px; border-radius: 12px; width: 500px; max-width: 90%; max-height: 90vh; overflow-y: auto; }
+        .modal-close { float: right; background: none; border: none; color: #fff; font-size: 24px; cursor: pointer; }
+        .modal-content h2 { margin-bottom: 20px; }
+        .modal-content label { display: block; margin: 10px 0 5px; font-size: 14px; }
+        .modal-content input, .modal-content select, .modal-content textarea { 
+            width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #444; 
+            background: #2A2A4A; color: #fff; font-size: 14px;
+        }
+        .modal-content textarea { min-height: 80px; resize: vertical; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .form-actions { display: flex; gap: 12px; margin-top: 20px; justify-content: flex-end; }
+        
+        .grid-melhorias { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+        .card-melhoria { background: #1A1932; padding: 20px; border-radius: 12px; border: 1px solid #333; }
+        .card-melhoria h4 { margin-bottom: 8px; }
+        .card-melhoria .desc { color: #888; font-size: 14px; }
+        .card-melhoria .footer { display: flex; justify-content: space-between; margin-top: 12px; padding-top: 12px; border-top: 1px solid #333; }
+        
+        .empty { text-align: center; padding: 60px; color: #888; }
+        
+        @media (max-width: 768px) {
+            body { flex-direction: column; }
+            .sidebar { width: 100%; padding: 10px; }
+            .sidebar ul { display: flex; overflow-x: auto; gap: 4px; }
+            .sidebar ul li { white-space: nowrap; padding: 8px 12px; font-size: 13px; }
+            .cards { grid-template-columns: 1fr 1fr; }
+            .form-row { grid-template-columns: 1fr; }
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Sidebar -->
-        <nav class="sidebar">
-            <div class="sidebar-header">
-                <h1>🏭 SIMFlow</h1>
-                <small>Gestão de Melhorias</small>
-            </div>
-            <div class="sidebar-nav">
-                <ul>
-                    <li class="active" onclick="carregarPagina('dashboard')">
-                        <span class="icon">📊</span> Dashboard
-                    </li>
-                    <li onclick="carregarPagina('etiquetas')">
-                        <span class="icon">🏷️</span> Etiquetas
-                        <span class="badge-sidebar" id="badge-etiquetas">0</span>
-                    </li>
-                    <li onclick="carregarPagina('ga')">
-                        <span class="icon">👥</span> GA
-                        <span class="badge-sidebar" id="badge-ga">0</span>
-                    </li>
-                    <li onclick="carregarPagina('melhorias')">
-                        <span class="icon">📈</span> Ver & Agir
-                        <span class="badge-sidebar" id="badge-melhorias">0</span>
-                    </li>
-                    <li onclick="carregarPagina('acidentes')">
-                        <span class="icon">⚠️</span> Quase Acidentes
-                        <span class="badge-sidebar" id="badge-acidentes">0</span>
-                    </li>
-                </ul>
-            </div>
-            <div class="sidebar-footer">
-                <div class="user-info">
-                    <div class="avatar">👤</div>
-                    <div>
-                        <div class="user-name">Operador</div>
-                        <div class="user-role">Turno da Noite</div>
-                    </div>
-                </div>
-            </div>
-        </nav>
-        
-        <!-- Conteúdo Principal -->
-        <main class="content">
-            <div class="content-header">
-                <h2 id="page-title">📊 Dashboard</h2>
-                <div class="header-actions">
-                    <button id="btn-novo" class="btn btn-primary" onclick="abrirModalPadrao()">+ Novo</button>
-                </div>
-            </div>
-            
-            <section id="page-content">
-                <div style="text-align:center; padding: 60px; color: var(--text-muted);">
-                    <h3>Carregando...</h3>
-                </div>
-            </section>
-        </main>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <h1>🏭 SIMFlow</h1>
+        <ul>
+            <li class="active" onclick="pagina('dashboard')">📊 Dashboard</li>
+            <li onclick="pagina('etiquetas')">🏷️ Etiquetas <span class="badge" id="badge-etiquetas">0</span></li>
+            <li onclick="pagina('ga')">👥 GA</li>
+            <li onclick="pagina('melhorias')">📈 Ver & Agir</li>
+            <li onclick="pagina('acidentes')">⚠️ Quase Acidentes</li>
+        </ul>
     </div>
-    
-    <!-- ============================================ -->
-    <!-- MODAL - ETIQUETA -->
-    <!-- ============================================ -->
-    <div id="modal-etiqueta" class="modal">
+
+    <!-- CONTEÚDO -->
+    <div class="content">
+        <div class="content-header">
+            <h2 id="titulo">📊 Dashboard</h2>
+            <button class="btn btn-primary" id="btnNovo" onclick="abrirModal()">+ Novo</button>
+        </div>
+        <div id="conteudo"></div>
+    </div>
+
+    <!-- =================================================== -->
+    <!-- MODAL ETIQUETA -->
+    <!-- =================================================== -->
+    <div class="modal" id="modal-etiqueta">
         <div class="modal-content">
-            <button class="modal-close" onclick="fecharModal('modal-etiqueta')">&times;</button>
+            <button class="modal-close" onclick="fecharModal('modal-etiqueta')">✕</button>
             <h2>📝 Nova Etiqueta</h2>
-            <form id="form-etiqueta" onsubmit="salvarEtiqueta(event)">
-                <input type="hidden" id="etiqueta-id">
-                <div>
-                    <label>Título</label>
-                    <input type="text" id="etiqueta-titulo" placeholder="Digite o título" required>
-                </div>
-                <div>
-                    <label>Descrição</label>
-                    <textarea id="etiqueta-descricao" placeholder="Descreva o problema" required></textarea>
-                </div>
+            <form onsubmit="salvarEtiqueta(event)">
+                <input type="hidden" id="et-id">
+                <label>Título</label>
+                <input type="text" id="et-titulo" required>
+                <label>Descrição</label>
+                <textarea id="et-descricao" required></textarea>
                 <div class="form-row">
                     <div>
                         <label>Tipo</label>
-                        <select id="etiqueta-tipo" required>
-                            <option value="Azul">🔵 Azul - Operador</option>
-                            <option value="Vermelha">🔴 Vermelha - Manutenção</option>
+                        <select id="et-tipo">
+                            <option value="Azul">🔵 Azul</option>
+                            <option value="Vermelha">🔴 Vermelha</option>
                         </select>
                     </div>
                     <div>
                         <label>Linha</label>
-                        <select id="etiqueta-linha">
+                        <select id="et-linha">
                             <option value="TREPKO">TREPKO</option>
                             <option value="SERAC">SERAC</option>
                         </select>
                     </div>
                 </div>
-                <div class="form-row">
-                    <div>
-                        <label>Responsável</label>
-                        <input type="text" id="etiqueta-responsavel" placeholder="Nome">
-                    </div>
-                    <div>
-                        <label>Via</label>
-                        <input type="text" id="etiqueta-via" placeholder="Controle/Manutenção">
-                    </div>
-                </div>
-                <div>
-                    <label>Observações</label>
-                    <textarea id="etiqueta-observacoes" placeholder="Observações" rows="2"></textarea>
-                </div>
+                <label>Responsável</label>
+                <input type="text" id="et-responsavel">
                 <div class="form-actions">
-                    <button type="button" class="btn btn-secondary" onclick="fecharModal('modal-etiqueta')">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">💾 Salvar</button>
+                    <button type="button" class="btn" style="background:#444;" onclick="fecharModal('modal-etiqueta')">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Salvar</button>
                 </div>
             </form>
         </div>
     </div>
-    
-    <!-- ============================================ -->
-    <!-- MODAL - GA -->
-    <!-- ============================================ -->
-    <div id="modal-ga" class="modal">
+
+    <!-- =================================================== -->
+    <!-- MODAL GA -->
+    <!-- =================================================== -->
+    <div class="modal" id="modal-ga">
         <div class="modal-content">
-            <button class="modal-close" onclick="fecharModal('modal-ga')">&times;</button>
+            <button class="modal-close" onclick="fecharModal('modal-ga')">✕</button>
             <h2>👥 Nova Reunião GA</h2>
-            <form id="form-ga" onsubmit="salvarGA(event)">
+            <form onsubmit="salvarGA(event)">
                 <input type="hidden" id="ga-id">
-                <div>
-                    <label>Data</label>
-                    <input type="date" id="ga-data" required>
-                </div>
-                <div>
-                    <label>Pauta</label>
-                    <input type="text" id="ga-pauta" placeholder="Assunto da reunião" required>
-                </div>
-                <div>
-                    <label>Participantes</label>
-                    <input type="text" id="ga-participantes" placeholder="Nomes separados por vírgula">
-                </div>
-                <div>
-                    <label>Decisões</label>
-                    <textarea id="ga-decisoes" placeholder="Decisões tomadas" rows="3"></textarea>
-                </div>
-                <div>
-                    <label>Ações Geradas</label>
-                    <input type="number" id="ga-acoes" placeholder="Quantidade" min="0" value="0">
-                </div>
+                <label>Data</label>
+                <input type="date" id="ga-data" required>
+                <label>Pauta</label>
+                <input type="text" id="ga-pauta" required>
+                <label>Participantes</label>
+                <input type="text" id="ga-participantes">
+                <label>Decisões</label>
+                <textarea id="ga-decisoes"></textarea>
+                <label>Ações Geradas</label>
+                <input type="number" id="ga-acoes" value="0">
                 <div class="form-actions">
-                    <button type="button" class="btn btn-secondary" onclick="fecharModal('modal-ga')">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">💾 Salvar</button>
+                    <button type="button" class="btn" style="background:#444;" onclick="fecharModal('modal-ga')">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Salvar</button>
                 </div>
             </form>
         </div>
     </div>
-    
-    <!-- ============================================ -->
-    <!-- MODAL - MELHORIA -->
-    <!-- ============================================ -->
-    <div id="modal-melhoria" class="modal">
+
+    <!-- =================================================== -->
+    <!-- MODAL MELHORIA -->
+    <!-- =================================================== -->
+    <div class="modal" id="modal-melhoria">
         <div class="modal-content">
-            <button class="modal-close" onclick="fecharModal('modal-melhoria')">&times;</button>
+            <button class="modal-close" onclick="fecharModal('modal-melhoria')">✕</button>
             <h2>📈 Nova Melhoria</h2>
-            <form id="form-melhoria" onsubmit="salvarMelhoria(event)">
-                <input type="hidden" id="melhoria-id">
-                <div>
-                    <label>Título</label>
-                    <input type="text" id="melhoria-titulo" placeholder="Título da melhoria" required>
-                </div>
-                <div>
-                    <label>Descrição</label>
-                    <textarea id="melhoria-descricao" placeholder="Descreva a melhoria" rows="3" required></textarea>
-                </div>
-                <div>
-                    <label>Categoria</label>
-                    <select id="melhoria-categoria" required>
-                        <option value="Ver & Agir">📊 Ver & Agir</option>
-                        <option value="LUP">📖 LUP - Lição de Um Ponto</option>
-                    </select>
-                </div>
+            <form onsubmit="salvarMelhoria(event)">
+                <input type="hidden" id="me-id">
+                <label>Título</label>
+                <input type="text" id="me-titulo" required>
+                <label>Descrição</label>
+                <textarea id="me-descricao" required></textarea>
+                <label>Categoria</label>
+                <select id="me-categoria">
+                    <option value="Ver & Agir">Ver & Agir</option>
+                    <option value="LUP">LUP</option>
+                </select>
                 <div class="form-actions">
-                    <button type="button" class="btn btn-secondary" onclick="fecharModal('modal-melhoria')">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">💾 Salvar</button>
+                    <button type="button" class="btn" style="background:#444;" onclick="fecharModal('modal-melhoria')">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Salvar</button>
                 </div>
             </form>
         </div>
     </div>
-    
-    <!-- ============================================ -->
-    <!-- MODAL - QUASE ACIDENTE -->
-    <!-- ============================================ -->
-    <div id="modal-acidente" class="modal">
+
+    <!-- =================================================== -->
+    <!-- MODAL ACIDENTE -->
+    <!-- =================================================== -->
+    <div class="modal" id="modal-acidente">
         <div class="modal-content">
-            <button class="modal-close" onclick="fecharModal('modal-acidente')">&times;</button>
+            <button class="modal-close" onclick="fecharModal('modal-acidente')">✕</button>
             <h2>⚠️ Registrar Quase Acidente</h2>
-            <form id="form-acidente" onsubmit="salvarAcidente(event)">
-                <input type="hidden" id="acidente-id">
-                <div>
-                    <label>Descrição</label>
-                    <textarea id="acidente-descricao" placeholder="Descreva o ocorrido" rows="3" required></textarea>
-                </div>
+            <form onsubmit="salvarAcidente(event)">
+                <input type="hidden" id="ac-id">
+                <label>Descrição</label>
+                <textarea id="ac-descricao" required></textarea>
                 <div class="form-row">
                     <div>
                         <label>Local</label>
-                        <input type="text" id="acidente-local" placeholder="Onde ocorreu" required>
+                        <input type="text" id="ac-local" required>
                     </div>
                     <div>
                         <label>Responsável</label>
-                        <input type="text" id="acidente-responsavel" placeholder="Quem registrou" required>
+                        <input type="text" id="ac-responsavel" required>
                     </div>
                 </div>
-                <div>
-                    <label>Status</label>
-                    <select id="acidente-status">
-                        <option value="Reportado">📢 Reportado</option>
-                        <option value="Em Análise">🔍 Em Análise</option>
-                        <option value="Resolvido">✅ Resolvido</option>
-                    </select>
-                </div>
+                <label>Status</label>
+                <select id="ac-status">
+                    <option value="Reportado">Reportado</option>
+                    <option value="Em Análise">Em Análise</option>
+                    <option value="Resolvido">Resolvido</option>
+                </select>
                 <div class="form-actions">
-                    <button type="button" class="btn btn-secondary" onclick="fecharModal('modal-acidente')">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">💾 Salvar</button>
+                    <button type="button" class="btn" style="background:#444;" onclick="fecharModal('modal-acidente')">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Salvar</button>
                 </div>
             </form>
         </div>
     </div>
-    
-    <!-- ============================================ -->
-    <!-- SCRIPT COMPLETO -->
-    <!-- ============================================ -->
+
+    <!-- =================================================== -->
+    <!-- SCRIPT PRINCIPAL -->
+    <!-- =================================================== -->
     <script>
-        // ================================================================
-        // SIMFLOW - SISTEMA COMPLETO
-        // ================================================================
         console.log('🚀 SIMFlow iniciado!');
-        
-        // ================================================================
-        // DADOS EM MEMÓRIA
-        // ================================================================
+
+        // ================================================
+        // DADOS
+        // ================================================
         let etiquetas = [];
-        let etiquetaId = 1;
-        
-        let gaReunioes = [];
+        let etId = 1;
+        let gaLista = [];
         let gaId = 1;
-        
-        let melhorias = [];
-        let melhoriaId = 1;
-        
-        let acidentes = [];
-        let acidenteId = 1;
-        
+        let melhoriasLista = [];
+        let meId = 1;
+        let acidentesLista = [];
+        let acId = 1;
         let paginaAtual = 'dashboard';
-        
-        // ================================================================
+
+        // ================================================
         // NAVEGAÇÃO
-        // ================================================================
-        function carregarPagina(pagina) {
-            console.log('📄 Carregando página:', pagina);
+        // ================================================
+        function pagina(pagina) {
+            console.log('📄 Navegando para:', pagina);
             paginaAtual = pagina;
-            
-            // Atualizar menu
-            document.querySelectorAll('.sidebar-nav ul li').forEach(item => {
-                item.classList.remove('active');
-            });
-            const menuItem = document.querySelector(`.sidebar-nav ul li[onclick*="${pagina}"]`);
-            if (menuItem) menuItem.classList.add('active');
-            
-            // Atualizar título
+
+            // Menu
+            document.querySelectorAll('.sidebar ul li').forEach(el => el.classList.remove('active'));
+            const items = document.querySelectorAll('.sidebar ul li');
+            const idx = ['dashboard','etiquetas','ga','melhorias','acidentes'].indexOf(pagina);
+            if (items[idx]) items[idx].classList.add('active');
+
+            // Título
             const titulos = {
                 'dashboard': '📊 Dashboard',
                 'etiquetas': '🏷️ Etiquetas',
-                'ga': '👥 Grupo Autônomo (GA)',
-                'melhorias': '📈 Ver & Agir / LUP\'S',
+                'ga': '👥 GA',
+                'melhorias': '📈 Ver & Agir',
                 'acidentes': '⚠️ Quase Acidentes'
             };
-            document.getElementById('page-title').textContent = titulos[pagina] || pagina;
-            
-            // Mostrar/esconder botão Novo
-            const btnNovo = document.getElementById('btn-novo');
-            btnNovo.style.display = (pagina === 'dashboard') ? 'none' : 'inline-flex';
-            
-            // Carregar conteúdo
+            document.getElementById('titulo').textContent = titulos[pagina] || pagina;
+
+            // Botão Novo
+            document.getElementById('btnNovo').style.display = (pagina === 'dashboard') ? 'none' : 'inline-block';
+
+            // Conteúdo
             switch(pagina) {
-                case 'dashboard': carregarDashboard(); break;
-                case 'etiquetas': carregarEtiquetas(); break;
-                case 'ga': carregarGA(); break;
-                case 'melhorias': carregarMelhorias(); break;
-                case 'acidentes': carregarAcidentes(); break;
+                case 'dashboard': renderDashboard(); break;
+                case 'etiquetas': renderEtiquetas(); break;
+                case 'ga': renderGA(); break;
+                case 'melhorias': renderMelhorias(); break;
+                case 'acidentes': renderAcidentes(); break;
             }
         }
-        
-        // ================================================================
+
+        // ================================================
         // DASHBOARD
-        // ================================================================
-        function carregarDashboard() {
-            const content = document.getElementById('page-content');
-            const abertas = etiquetas.filter(e => e.status !== 'Concluída');
-            
-            // Atualizar badges
-            document.getElementById('badge-etiquetas').textContent = abertas.length;
-            document.getElementById('badge-ga').textContent = gaReunioes.length;
-            document.getElementById('badge-melhorias').textContent = melhorias.length;
-            document.getElementById('badge-acidentes').textContent = acidentes.filter(a => a.status !== 'Resolvido').length;
-            
+        // ================================================
+        function renderDashboard() {
+            const total = etiquetas.length;
+            const abertas = etiquetas.filter(e => e.status !== 'Concluída').length;
+            const vermelhas = etiquetas.filter(e => e.tipo === 'Vermelha' && e.status !== 'Concluída').length;
+            const azuis = etiquetas.filter(e => e.tipo === 'Azul' && e.status !== 'Concluída').length;
+
+            document.getElementById('badge-etiquetas').textContent = abertas;
+
             let html = `
-                <div class="dashboard-cards">
-                    <div class="card card-purple">
-                        <div class="card-icon">📋</div>
-                        <div class="card-label">Etiquetas</div>
-                        <div class="card-value">${etiquetas.length}</div>
-                        <small style="color:var(--text-muted);">${abertas.length} abertas</small>
-                    </div>
-                    <div class="card card-green">
-                        <div class="card-icon">👥</div>
-                        <div class="card-label">Reuniões GA</div>
-                        <div class="card-value">${gaReunioes.length}</div>
-                    </div>
-                    <div class="card card-blue">
-                        <div class="card-icon">📈</div>
-                        <div class="card-label">Melhorias</div>
-                        <div class="card-value">${melhorias.length}</div>
-                    </div>
-                    <div class="card card-red">
-                        <div class="card-icon">⚠️</div>
-                        <div class="card-label">Quase Acidentes</div>
-                        <div class="card-value">${acidentes.filter(a => a.status !== 'Resolvido').length}</div>
-                        <small style="color:var(--text-muted);">${acidentes.filter(a => a.status === 'Resolvido').length} resolvidos</small>
-                    </div>
+                <div class="cards">
+                    <div class="card"><div class="value">${total}</div><div class="label">Total Etiquetas</div></div>
+                    <div class="card"><div class="value">${abertas}</div><div class="label">Em Aberto</div></div>
+                    <div class="card"><div class="value">${vermelhas}</div><div class="label">Vermelhas</div></div>
+                    <div class="card"><div class="value">${azuis}</div><div class="label">Azuis</div></div>
                 </div>
-                <div class="table-container">
-                    <div class="table-header"><h3>📋 Últimas Etiquetas</h3></div>
-                    <div class="table-wrapper">
-                        <table>
-                            <thead><tr><th>ID</th><th>Título</th><th>Tipo</th><th>Status</th><th>Data</th></tr></thead>
-                            <tbody>
+                <h3 style="margin-bottom:12px;">📋 Últimas Etiquetas</h3>
+                <table>
+                    <thead><tr><th>ID</th><th>Título</th><th>Tipo</th><th>Status</th></tr></thead>
+                    <tbody>
             `;
-            
-            const ultimas = [...etiquetas].reverse().slice(0, 5);
+
+            const ultimas = [...etiquetas].reverse().slice(0,5);
             if (ultimas.length === 0) {
-                html += `<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhuma etiqueta</td></tr>`;
+                html += `<tr><td colspan="4" style="text-align:center;color:#888;padding:30px;">Nenhuma etiqueta</td></tr>`;
             } else {
                 ultimas.forEach(e => {
                     const tipoClass = e.tipo === 'Azul' ? 'badge-azul' : 'badge-vermelha';
                     const statusClass = e.status === 'Concluída' ? 'status-concluida' : 'status-aberta';
-                    html += `<tr><td>#${e.id}</td><td>${e.titulo}</td><td><span class="badge ${tipoClass}">${e.tipo}</span></td><td><span class="${statusClass}">${e.status}</span></td><td>${e.data_abertura}</td></tr>`;
+                    html += `<tr><td>#${e.id}</td><td>${e.titulo}</td><td><span class="${tipoClass}">${e.tipo}</span></td><td><span class="${statusClass}">${e.status}</span></td></tr>`;
                 });
             }
-            
-            html += `</tbody></table></div></div>`;
-            content.innerHTML = html;
+
+            html += `</tbody></table>`;
+            document.getElementById('conteudo').innerHTML = html;
         }
-        
-        // ================================================================
+
+        // ================================================
         // ETIQUETAS
-        // ================================================================
-        function carregarEtiquetas() {
-            const content = document.getElementById('page-content');
-            
+        // ================================================
+        function renderEtiquetas() {
             let html = `
-                <div class="table-container">
-                    <div class="table-header">
-                        <h3>🏷️ Todas as Etiquetas</h3>
-                        <div class="table-filters">
-                            <select id="filtro-tipo" onchange="filtrarEtiquetas()">
-                                <option value="">Todos</option>
-                                <option value="Azul">🔵 Azul</option>
-                                <option value="Vermelha">🔴 Vermelha</option>
-                            </select>
-                            <select id="filtro-status" onchange="filtrarEtiquetas()">
-                                <option value="">Todos</option>
-                                <option value="Aberta">⏳ Aberta</option>
-                                <option value="Em Análise">🔍 Em Análise</option>
-                                <option value="Concluída">✅ Concluída</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="table-wrapper">
-                        <table>
-                            <thead><tr><th>ID</th><th>Título</th><th>Descrição</th><th>Tipo</th><th>Status</th><th>Linha</th><th>Responsável</th><th>Ações</th></tr></thead>
-                            <tbody id="tabela-etiquetas-body">
+                <table>
+                    <thead><tr><th>ID</th><th>Título</th><th>Descrição</th><th>Tipo</th><th>Status</th><th>Ações</th></tr></thead>
+                    <tbody>
             `;
-            
+
             if (etiquetas.length === 0) {
-                html += `<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhuma etiqueta</td></tr>`;
+                html += `<tr><td colspan="6" style="text-align:center;color:#888;padding:30px;">Nenhuma etiqueta</td></tr>`;
             } else {
                 etiquetas.forEach(e => {
                     const tipoClass = e.tipo === 'Azul' ? 'badge-azul' : 'badge-vermelha';
                     const statusClass = e.status === 'Concluída' ? 'status-concluida' : 'status-aberta';
                     html += `
-                        <tr data-tipo="${e.tipo}" data-status="${e.status}">
-                            <td>#${e.id}</td>
-                            <td><strong>${e.titulo}</strong></td>
-                            <td>${e.descricao.substring(0, 50)}${e.descricao.length > 50 ? '...' : ''}</td>
-                            <td><span class="badge ${tipoClass}">${e.tipo}</span></td>
-                            <td><span class="${statusClass}">${e.status}</span></td>
-                            <td>${e.linha || '-'}</td>
-                            <td>${e.responsavel || '-'}</td>
-                            <td>
-                                <div style="display:flex;gap:4px;flex-wrap:wrap;">
-                                    ${e.status !== 'Concluída' ? `
-                                        <button class="btn btn-sm btn-primary" onclick="atualizarStatusEtiqueta(${e.id}, 'Em Análise')">Analisar</button>
-                                        <button class="btn btn-sm btn-success" onclick="atualizarStatusEtiqueta(${e.id}, 'Concluída')">Concluir</button>
-                                    ` : ''}
-                                    <button class="btn btn-sm btn-danger" onclick="deletarEtiqueta(${e.id})">🗑️</button>
-                                </div>
-                            </td>
-                        </tr>
-                    `;
-                });
-            }
-            
-            html += `</tbody></table></div></div>`;
-            content.innerHTML = html;
-        }
-        
-        function salvarEtiqueta(event) {
-            event.preventDefault();
-            const id = document.getElementById('etiqueta-id').value;
-            const hoje = new Date().toLocaleDateString('pt-BR');
-            
-            const dados = {
-                titulo: document.getElementById('etiqueta-titulo').value,
-                descricao: document.getElementById('etiqueta-descricao').value,
-                tipo: document.getElementById('etiqueta-tipo').value,
-                linha: document.getElementById('etiqueta-linha').value,
-                responsavel: document.getElementById('etiqueta-responsavel').value,
-                via: document.getElementById('etiqueta-via').value,
-                observacoes: document.getElementById('etiqueta-observacoes').value
-            };
-            
-            if (id) {
-                const index = etiquetas.findIndex(e => e.id === parseInt(id));
-                if (index !== -1) {
-                    etiquetas[index] = { ...etiquetas[index], ...dados };
-                }
-            } else {
-                etiquetas.push({
-                    id: etiquetaId++,
-                    ...dados,
-                    status: 'Aberta',
-                    data_abertura: hoje,
-                    data_fechamento: null
-                });
-            }
-            
-            fecharModal('modal-etiqueta');
-            carregarPagina(paginaAtual);
-        }
-        
-        function atualizarStatusEtiqueta(id, novoStatus) {
-            const etiqueta = etiquetas.find(e => e.id === id);
-            if (etiqueta) {
-                etiqueta.status = novoStatus;
-                if (novoStatus === 'Concluída') {
-                    etiqueta.data_fechamento = new Date().toLocaleDateString('pt-BR');
-                }
-                carregarPagina(paginaAtual);
-            }
-        }
-        
-        function deletarEtiqueta(id) {
-            if (confirm('Deseja excluir esta etiqueta?')) {
-                etiquetas = etiquetas.filter(e => e.id !== id);
-                carregarPagina(paginaAtual);
-            }
-        }
-        
-        function filtrarEtiquetas() {
-            const tipo = document.getElementById('filtro-tipo').value;
-            const status = document.getElementById('filtro-status').value;
-            const rows = document.querySelectorAll('#tabela-etiquetas-body tr');
-            rows.forEach(row => {
-                if (row.cells.length === 1) return;
-                const rowTipo = row.dataset.tipo || '';
-                const rowStatus = row.dataset.status || '';
-                let mostrar = true;
-                if (tipo && rowTipo !== tipo) mostrar = false;
-                if (status && rowStatus !== status) mostrar = false;
-                row.style.display = mostrar ? '' : 'none';
-            });
-        }
-        
-        // ================================================================
-        // GA (GRUPO AUTÔNOMO)
-        // ================================================================
-        function carregarGA() {
-            const content = document.getElementById('page-content');
-            
-            let html = `
-                <div class="table-container">
-                    <div class="table-header">
-                        <h3>👥 Reuniões do GA</h3>
-                    </div>
-                    <div class="table-wrapper">
-                        <table>
-                            <thead><tr><th>ID</th><th>Data</th><th>Pauta</th><th>Participantes</th><th>Decisões</th><th>Ações</th><th>Ações</th></tr></thead>
-                            <tbody>
-            `;
-            
-            if (gaReunioes.length === 0) {
-                html += `<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhuma reunião</td></tr>`;
-            } else {
-                gaReunioes.forEach(r => {
-                    html += `
                         <tr>
-                            <td>#${r.id}</td>
-                            <td>${r.data}</td>
-                            <td><strong>${r.pauta}</strong></td>
-                            <td>${r.participantes || '-'}</td>
-                            <td>${r.decisoes ? r.decisoes.substring(0, 50) + (r.decisoes.length > 50 ? '...' : '') : '-'}</td>
-                            <td><span class="badge badge-info">${r.acoes_geradas || 0}</span></td>
+                            <td>#${e.id}</td>
+                            <td><b>${e.titulo}</b></td>
+                            <td>${e.descricao.substring(0,40)}${e.descricao.length > 40 ? '...' : ''}</td>
+                            <td><span class="${tipoClass}">${e.tipo}</span></td>
+                            <td><span class="${statusClass}">${e.status}</span></td>
                             <td>
-                                <button class="btn btn-sm btn-danger" onclick="deletarGA(${r.id})">🗑️</button>
+                                ${e.status !== 'Concluída' ? `
+                                    <button class="btn btn-sm btn-primary" onclick="atualizarEtiqueta(${e.id}, 'Em Análise')">Analisar</button>
+                                    <button class="btn btn-sm btn-success" onclick="atualizarEtiqueta(${e.id}, 'Concluída')">Concluir</button>
+                                ` : ''}
+                                <button class="btn btn-sm btn-danger" onclick="deletarEtiqueta(${e.id})">🗑️</button>
                             </td>
                         </tr>
                     `;
                 });
             }
-            
-            html += `</tbody></table></div></div>`;
-            content.innerHTML = html;
+
+            html += `</tbody></table>`;
+            document.getElementById('conteudo').innerHTML = html;
         }
-        
-        function salvarGA(event) {
-            event.preventDefault();
+
+        function salvarEtiqueta(e) {
+            e.preventDefault();
+            const id = document.getElementById('et-id').value;
+            const hoje = new Date().toLocaleDateString('pt-BR');
+            const dados = {
+                titulo: document.getElementById('et-titulo').value,
+                descricao: document.getElementById('et-descricao').value,
+                tipo: document.getElementById('et-tipo').value,
+                linha: document.getElementById('et-linha').value,
+                responsavel: document.getElementById('et-responsavel').value
+            };
+
+            if (id) {
+                const idx = etiquetas.findIndex(el => el.id === parseInt(id));
+                if (idx !== -1) etiquetas[idx] = { ...etiquetas[idx], ...dados };
+            } else {
+                etiquetas.push({ id: etId++, ...dados, status: 'Aberta', data: hoje });
+            }
+
+            fecharModal('modal-etiqueta');
+            pagina(paginaAtual);
+        }
+
+        function atualizarEtiqueta(id, status) {
+            const el = etiquetas.find(e => e.id === id);
+            if (el) { el.status = status; pagina(paginaAtual); }
+        }
+
+        function deletarEtiqueta(id) {
+            if (confirm('Excluir?')) {
+                etiquetas = etiquetas.filter(e => e.id !== id);
+                pagina(paginaAtual);
+            }
+        }
+
+        // ================================================
+        // GA
+        // ================================================
+        function renderGA() {
+            let html = `<table><thead><tr><th>ID</th><th>Data</th><th>Pauta</th><th>Ações</th></tr></thead><tbody>`;
+            if (gaLista.length === 0) {
+                html += `<tr><td colspan="4" style="text-align:center;color:#888;padding:30px;">Nenhuma reunião</td></tr>`;
+            } else {
+                gaLista.forEach(r => {
+                    html += `<tr><td>#${r.id}</td><td>${r.data}</td><td>${r.pauta}</td><td><button class="btn btn-sm btn-danger" onclick="deletarGA(${r.id})">🗑️</button></td></tr>`;
+                });
+            }
+            html += `</tbody></table>`;
+            document.getElementById('conteudo').innerHTML = html;
+        }
+
+        function salvarGA(e) {
+            e.preventDefault();
             const id = document.getElementById('ga-id').value;
-            const dataISO = document.getElementById('ga-data').value;
-            const dataFormatada = new Date(dataISO + 'T00:00:00').toLocaleDateString('pt-BR');
-            
+            const data = document.getElementById('ga-data').value;
+            const dataFormatada = new Date(data+'T00:00:00').toLocaleDateString('pt-BR');
             const dados = {
                 data: dataFormatada,
                 pauta: document.getElementById('ga-pauta').value,
                 participantes: document.getElementById('ga-participantes').value,
                 decisoes: document.getElementById('ga-decisoes').value,
-                acoes_geradas: parseInt(document.getElementById('ga-acoes').value) || 0
+                acoes: parseInt(document.getElementById('ga-acoes').value) || 0
             };
-            
             if (id) {
-                const index = gaReunioes.findIndex(r => r.id === parseInt(id));
-                if (index !== -1) {
-                    gaReunioes[index] = { ...gaReunioes[index], ...dados };
-                }
+                const idx = gaLista.findIndex(r => r.id === parseInt(id));
+                if (idx !== -1) gaLista[idx] = { ...gaLista[idx], ...dados };
             } else {
-                gaReunioes.push({ id: gaId++, ...dados });
+                gaLista.push({ id: gaId++, ...dados });
             }
-            
             fecharModal('modal-ga');
-            carregarPagina(paginaAtual);
+            pagina(paginaAtual);
         }
-        
+
         function deletarGA(id) {
-            if (confirm('Deseja excluir esta reunião?')) {
-                gaReunioes = gaReunioes.filter(r => r.id !== id);
-                carregarPagina(paginaAtual);
-            }
+            if (confirm('Excluir?')) { gaLista = gaLista.filter(r => r.id !== id); pagina(paginaAtual); }
         }
-        
-        // ================================================================
+
+        // ================================================
         // MELHORIAS
-        // ================================================================
-        function carregarMelhorias() {
-            const content = document.getElementById('page-content');
-            
+        // ================================================
+        function renderMelhorias() {
             let html = `<div class="grid-melhorias">`;
-            
-            if (melhorias.length === 0) {
-                html += `
-                    <div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--text-muted);background:var(--bg-card);border-radius:var(--border-radius);">
-                        <div style="font-size:48px;margin-bottom:16px;">📈</div>
-                        <h3>Nenhuma melhoria</h3>
-                    </div>
-                `;
+            if (melhoriasLista.length === 0) {
+                html += `<div class="empty">Nenhuma melhoria</div>`;
             } else {
-                melhorias.forEach(m => {
-                    const categoriaClass = m.categoria === 'Ver & Agir' ? 'badge-success' : 'badge-info';
+                melhoriasLista.forEach(m => {
                     html += `
                         <div class="card-melhoria">
-                            <div class="melhoria-header">
-                                <h4>${m.titulo}</h4>
-                                <span class="badge ${categoriaClass}">${m.categoria}</span>
-                            </div>
-                            <div class="melhoria-descricao">${m.descricao}</div>
-                            <div class="melhoria-footer">
-                                <small>📅 ${m.data_criacao}</small>
+                            <h4>${m.titulo}</h4>
+                            <div class="desc">${m.descricao}</div>
+                            <div class="footer">
+                                <span style="color:#888;font-size:12px;">${m.categoria}</span>
                                 <button class="btn btn-sm btn-danger" onclick="deletarMelhoria(${m.id})">🗑️</button>
                             </div>
                         </div>
                     `;
                 });
             }
-            
             html += `</div>`;
-            content.innerHTML = html;
+            document.getElementById('conteudo').innerHTML = html;
         }
-        
-        function salvarMelhoria(event) {
-            event.preventDefault();
-            const id = document.getElementById('melhoria-id').value;
-            const hoje = new Date().toLocaleDateString('pt-BR');
-            
+
+        function salvarMelhoria(e) {
+            e.preventDefault();
+            const id = document.getElementById('me-id').value;
             const dados = {
-                titulo: document.getElementById('melhoria-titulo').value,
-                descricao: document.getElementById('melhoria-descricao').value,
-                categoria: document.getElementById('melhoria-categoria').value,
-                data_criacao: hoje
+                titulo: document.getElementById('me-titulo').value,
+                descricao: document.getElementById('me-descricao').value,
+                categoria: document.getElementById('me-categoria').value,
+                data: new Date().toLocaleDateString('pt-BR')
             };
-            
             if (id) {
-                const index = melhorias.findIndex(m => m.id === parseInt(id));
-                if (index !== -1) {
-                    melhorias[index] = { ...melhorias[index], ...dados };
-                }
+                const idx = melhoriasLista.findIndex(m => m.id === parseInt(id));
+                if (idx !== -1) melhoriasLista[idx] = { ...melhoriasLista[idx], ...dados };
             } else {
-                melhorias.push({ id: melhoriaId++, ...dados });
+                melhoriasLista.push({ id: meId++, ...dados });
             }
-            
             fecharModal('modal-melhoria');
-            carregarPagina(paginaAtual);
+            pagina(paginaAtual);
         }
-        
+
         function deletarMelhoria(id) {
-            if (confirm('Deseja excluir esta melhoria?')) {
-                melhorias = melhorias.filter(m => m.id !== id);
-                carregarPagina(paginaAtual);
-            }
+            if (confirm('Excluir?')) { melhoriasLista = melhoriasLista.filter(m => m.id !== id); pagina(paginaAtual); }
         }
-        
-        // ================================================================
-        // QUASE ACIDENTES
-        // ================================================================
-        function carregarAcidentes() {
-            const content = document.getElementById('page-content');
-            
-            let html = `
-                <div class="table-container">
-                    <div class="table-header">
-                        <h3>⚠️ Registro de Quase Acidentes</h3>
-                        <div class="table-filters">
-                            <select id="filtro-status-acidente" onchange="filtrarAcidentes()">
-                                <option value="">Todos</option>
-                                <option value="Reportado">📢 Reportado</option>
-                                <option value="Em Análise">🔍 Em Análise</option>
-                                <option value="Resolvido">✅ Resolvido</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="table-wrapper">
-                        <table>
-                            <thead><tr><th>ID</th><th>Descrição</th><th>Local</th><th>Responsável</th><th>Status</th><th>Data</th><th>Ações</th></tr></thead>
-                            <tbody id="tabela-acidentes-body">
-            `;
-            
-            if (acidentes.length === 0) {
-                html += `<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhum registro</td></tr>`;
+
+        // ================================================
+        // ACIDENTES
+        // ================================================
+        function renderAcidentes() {
+            let html = `<table><thead><tr><th>ID</th><th>Descrição</th><th>Local</th><th>Status</th><th>Ações</th></tr></thead><tbody>`;
+            if (acidentesLista.length === 0) {
+                html += `<tr><td colspan="5" style="text-align:center;color:#888;padding:30px;">Nenhum registro</td></tr>`;
             } else {
-                acidentes.forEach(a => {
-                    const statusClass = {
-                        'Reportado': 'status-aberta',
-                        'Em Análise': 'status-em-analise',
-                        'Resolvido': 'status-concluida'
-                    }[a.status] || '';
-                    
+                acidentesLista.forEach(a => {
+                    const statusClass = a.status === 'Resolvido' ? 'status-concluida' : 'status-aberta';
                     html += `
-                        <tr data-status="${a.status}">
+                        <tr>
                             <td>#${a.id}</td>
                             <td>${a.descricao}</td>
                             <td>${a.local}</td>
-                            <td>${a.responsavel}</td>
                             <td><span class="${statusClass}">${a.status}</span></td>
-                            <td>${a.data}</td>
                             <td>
-                                <div style="display:flex;gap:4px;flex-wrap:wrap;">
-                                    ${a.status !== 'Resolvido' ? `
-                                        <button class="btn btn-sm btn-primary" onclick="atualizarStatusAcidente(${a.id}, 'Em Análise')">Analisar</button>
-                                        <button class="btn btn-sm btn-success" onclick="atualizarStatusAcidente(${a.id}, 'Resolvido')">Resolver</button>
-                                    ` : ''}
-                                    <button class="btn btn-sm btn-danger" onclick="deletarAcidente(${a.id})">🗑️</button>
-                                </div>
+                                ${a.status !== 'Resolvido' ? `
+                                    <button class="btn btn-sm btn-primary" onclick="atualizarAcidente(${a.id}, 'Em Análise')">Analisar</button>
+                                    <button class="btn btn-sm btn-success" onclick="atualizarAcidente(${a.id}, 'Resolvido')">Resolver</button>
+                                ` : ''}
+                                <button class="btn btn-sm btn-danger" onclick="deletarAcidente(${a.id})">🗑️</button>
                             </td>
                         </tr>
                     `;
                 });
             }
-            
-            html += `</tbody></table></div></div>`;
-            content.innerHTML = html;
+            html += `</tbody></table>`;
+            document.getElementById('conteudo').innerHTML = html;
         }
-        
-        function salvarAcidente(event) {
-            event.preventDefault();
-            const id = document.getElementById('acidente-id').value;
-            const hoje = new Date().toLocaleDateString('pt-BR');
-            
+
+        function salvarAcidente(e) {
+            e.preventDefault();
+            const id = document.getElementById('ac-id').value;
             const dados = {
-                descricao: document.getElementById('acidente-descricao').value,
-                local: document.getElementById('acidente-local').value,
-                responsavel: document.getElementById('acidente-responsavel').value,
-                status: document.getElementById('acidente-status').value,
-                data: hoje
+                descricao: document.getElementById('ac-descricao').value,
+                local: document.getElementById('ac-local').value,
+                responsavel: document.getElementById('ac-responsavel').value,
+                status: document.getElementById('ac-status').value,
+                data: new Date().toLocaleDateString('pt-BR')
             };
-            
             if (id) {
-                const index = acidentes.findIndex(a => a.id === parseInt(id));
-                if (index !== -1) {
-                    acidentes[index] = { ...acidentes[index], ...dados };
-                }
+                const idx = acidentesLista.findIndex(a => a.id === parseInt(id));
+                if (idx !== -1) acidentesLista[idx] = { ...acidentesLista[idx], ...dados };
             } else {
-                acidentes.push({ id: acidenteId++, ...dados });
+                acidentesLista.push({ id: acId++, ...dados });
             }
-            
             fecharModal('modal-acidente');
-            carregarPagina(paginaAtual);
+            pagina(paginaAtual);
         }
-        
-        function atualizarStatusAcidente(id, novoStatus) {
-            const acidente = acidentes.find(a => a.id === id);
-            if (acidente) {
-                acidente.status = novoStatus;
-                carregarPagina(paginaAtual);
-            }
+
+        function atualizarAcidente(id, status) {
+            const el = acidentesLista.find(a => a.id === id);
+            if (el) { el.status = status; pagina(paginaAtual); }
         }
-        
+
         function deletarAcidente(id) {
-            if (confirm('Deseja excluir este registro?')) {
-                acidentes = acidentes.filter(a => a.id !== id);
-                carregarPagina(paginaAtual);
-            }
+            if (confirm('Excluir?')) { acidentesLista = acidentesLista.filter(a => a.id !== id); pagina(paginaAtual); }
         }
-        
-        function filtrarAcidentes() {
-            const status = document.getElementById('filtro-status-acidente').value;
-            const rows = document.querySelectorAll('#tabela-acidentes-body tr');
-            rows.forEach(row => {
-                if (row.cells.length === 1) return;
-                const rowStatus = row.dataset.status || '';
-                row.style.display = (status && rowStatus !== status) ? 'none' : '';
-            });
-        }
-        
-        // ================================================================
+
+        // ================================================
         // MODAIS
-        // ================================================================
-        function abrirModalPadrao() {
-            console.log('📝 Abrindo modal para:', paginaAtual);
-            
+        // ================================================
+        function abrirModal() {
             switch(paginaAtual) {
                 case 'etiquetas':
                     document.getElementById('modal-etiqueta').style.display = 'flex';
-                    document.getElementById('form-etiqueta').reset();
-                    document.getElementById('etiqueta-id').value = '';
-                    document.body.style.overflow = 'hidden';
+                    document.getElementById('modal-etiqueta').querySelector('form').reset();
+                    document.getElementById('et-id').value = '';
                     break;
                 case 'ga':
                     document.getElementById('modal-ga').style.display = 'flex';
-                    document.getElementById('form-ga').reset();
+                    document.getElementById('modal-ga').querySelector('form').reset();
                     document.getElementById('ga-id').value = '';
                     document.getElementById('ga-data').value = new Date().toISOString().split('T')[0];
-                    document.body.style.overflow = 'hidden';
                     break;
                 case 'melhorias':
                     document.getElementById('modal-melhoria').style.display = 'flex';
-                    document.getElementById('form-melhoria').reset();
-                    document.getElementById('melhoria-id').value = '';
-                    document.body.style.overflow = 'hidden';
+                    document.getElementById('modal-melhoria').querySelector('form').reset();
+                    document.getElementById('me-id').value = '';
                     break;
                 case 'acidentes':
                     document.getElementById('modal-acidente').style.display = 'flex';
-                    document.getElementById('form-acidente').reset();
-                    document.getElementById('acidente-id').value = '';
-                    document.body.style.overflow = 'hidden';
+                    document.getElementById('modal-acidente').querySelector('form').reset();
+                    document.getElementById('ac-id').value = '';
                     break;
-                default:
-                    alert('Nenhuma ação disponível');
             }
         }
-        
+
         function fecharModal(id) {
             document.getElementById(id).style.display = 'none';
-            document.body.style.overflow = 'auto';
         }
-        
-        // Fechar modal clicando fora
+
+        // Fechar clicando fora
         document.addEventListener('click', function(e) {
             if (e.target.classList.contains('modal')) {
                 e.target.style.display = 'none';
-                document.body.style.overflow = 'auto';
             }
         });
-        
-        // Fechar modais com ESC
+
+        // Fechar com ESC
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
                 document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
-                document.body.style.overflow = 'auto';
             }
         });
-        
-        // ================================================================
-        // INICIALIZAR
-        // ================================================================
-        carregarPagina('dashboard');
-        
+
+        // ================================================
+        // INICIAR
+        // ================================================
+        pagina('dashboard');
         console.log('✅ SIMFlow pronto!');
-        console.log('📋 Etiquetas:', etiquetas);
-        console.log('👥 GA:', gaReunioes);
-        console.log('📈 Melhorias:', melhorias);
-        console.log('⚠️ Acidentes:', acidentes);
     </script>
+
 </body>
 </html>
