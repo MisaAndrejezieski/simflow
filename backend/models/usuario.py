@@ -9,7 +9,7 @@ class Usuario(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(100), nullable=False)
     usuario = db.Column(db.String(50), unique=True, nullable=False)
-    senha = db.Column(db.String(200), nullable=False)  # Em produção, usar hash
+    senha = db.Column(db.String(200), nullable=False)
     perfil = db.Column(db.String(20), nullable=False)  # operador, tecnico, manutentor, gestor
     setor = db.Column(db.String(50))
     ativo = db.Column(db.Boolean, default=True)
